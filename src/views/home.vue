@@ -44,6 +44,7 @@ export default defineComponent({
 .homeContainer{
   min-width: 700px;
   width: 100%;
+  height: 3000px;
   display: flex;
   justify-content:space-around ;
   border: 1px solid blue;
