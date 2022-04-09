@@ -1,10 +1,17 @@
 <template>
   <div class="navContainer">
-    <nav>
-      <router-link to="/">Home</router-link> |
-      <router-link to="/personalCenter">About</router-link>
-    </nav>
-    <span>333</span>
+    <div class="iconWrap"></div>
+    <div class="contentWrap">
+      <div>
+        <span>Study</span>
+      </div>
+      <div>
+        <span>Game</span>
+      </div>
+      <div>
+        <span>Log in</span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -29,8 +36,23 @@ export default defineComponent({
   width: 100%;
   height: 60px;
   border: 1px solid red;
-  span{
-    color: red;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .iconWrap{
+    height: 40px;
+    width: 100px;
+    border: 1px solid red;
+    margin-left: 20px;
+  }
+  .contentWrap{
+    height: 40px;
+    border: 1px solid red;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-right: 20px;
+
   }
 }
 </style>

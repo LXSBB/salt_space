@@ -1,8 +1,11 @@
 <template>
-  <div>
-    <span>{{ homeStore.num }}</span>
-    <button @click="click">click</button>
-    <span>{{myNum}}</span>
+  <div class="homeContainer">
+<!--    <span>{{ homeStore.num }}</span>-->
+<!--    <button @click="click">click</button>-->
+<!--    <span>{{myNum}}</span>-->
+    <div class="a1"></div>
+    <div class="a1"></div>
+    <div class="a1"></div>
     <div class="a1"></div>
   </div>
 </template>
@@ -17,30 +20,39 @@ export default defineComponent({
     const homeStore:any = useHomeStore()
     const myNum = ref(1)
 
-    function click() {
-      bus.emit('kkk',111)
-      // homeStore.$patch((state:any) => {
-      //   state.num++
-      //   myNum.value = state.num
-      // })
-
-      //homeStore.num++
-      // homeStore.countPlusOne(100)
-    }
+    // function click() {
+    //   bus.emit('kkk',111)
+    //   // homeStore.$patch((state:any) => {
+    //   //   state.num++
+    //   //   myNum.value = state.num
+    //   // })
+    //
+    //   //homeStore.num++
+    //   // homeStore.countPlusOne(100)
+    // }
 
     return {
       homeStore,
       myNum,
-      click
+      //click
     }
   }
 })
 </script>
 
 <style scoped lang="scss">
-.a1{
-  width: 100px;
-  height: 200px;
-  background-color: aquamarine;
+.homeContainer{
+  min-width: 700px;
+  width: 100%;
+  display: flex;
+  justify-content:space-around ;
+  border: 1px solid blue;
+  .a1{
+    min-width: 140px;
+    width: 300px;
+    height: 200px;
+    margin-bottom: 30px;
+    background-color: aquamarine;
+  }
 }
 </style>
