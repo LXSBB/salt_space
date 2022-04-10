@@ -4,8 +4,8 @@
     <div class="closeLogin">
       <img class="closeImg" src="src/assets/image/close.png" @click="closeLogInBox">
     </div>
-    <div class="loginWays">
-      <div class="mobileWays">
+    <div class="loginWays" >
+      <div class="mobileWays" v-showRipple="`rgba(113,164,183,0.3)`">
         <span class="mobileWaysSpan">Log Ln With Mobile</span>
       </div>
     </div>
@@ -85,8 +85,10 @@ export default defineComponent({
       color: #1E3FBFFF;
       cursor: pointer;
       transition: all .3s;
+      overflow: hidden;
       .mobileWaysSpan{
         font-size: 16px;
+        user-select: none;
       }
     }
     .mobileWays:hover{
@@ -101,6 +103,7 @@ export default defineComponent({
     justify-content: space-between;
     font-size: 12px;
     color: #666666;
+    user-select: none;
     &:before{
       width: 40%;
       height: 1px;
