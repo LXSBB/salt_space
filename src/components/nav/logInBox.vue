@@ -1,49 +1,78 @@
 <template>
   <div class="htmlMask" @click="closeLogInBox"></div>
-  <div class="loginContainer">
-    <div class="closeLogin">
-      <img class="closeImg" src="src/assets/image/close.png" @click="closeLogInBox">
-    </div>
-    <div class="loginWays" >
-      <div class="mobileWays" v-showRipple="`rgba(113,164,183,0.3)`" @click="changeWays">
-        <span class="mobileWaysSpan">{{isMobileWays?`Log Ln With Account`:`Log Ln With Mobile`}}</span>
+  <transition name="box">
+    <div v-if="showLoginBox" class="loginContainer">
+      <div class="closeLogin">
+        <img class="closeImg" src="src/assets/image/close.png" @click="closeLogInBox">
       </div>
-    </div>
-    <div class="boxLine">
-      Or
-    </div>
-    <div class="loginForm">
-      <div class="loginFormWrap">
-        <transition name="fade">
-          <div class="userNameLogin loginFormContent" v-if="!isMobileWays">
-            <nav-input :inputType = '`账号/用户名/邮箱`'></nav-input>
-            <nav-input :inputType = '`密码`'></nav-input>
-          </div>
-        </transition>
-        <transition name="fade">
-          <div class="mobileLogin loginFormContent" v-if="isMobileWays">
-            <nav-input :inputType = '`大陆手机号码`'></nav-input>
-            <div class="sendCodeWrap">
-              <nav-input :inputType = '`验证码`'></nav-input>
-              <div class="sendCodeButton" @click="sendCode">
-                <span v-if="!isSendCode" class="sendCodeButtonSpan">Send</span>
-                <span v-else class="countDownSpan">{{countdown}}</span>
+      <div class="loginWays" >
+        <div class="mobileWays"  @click="changeWays">
+          <span class="mobileWaysSpan">{{isMobileWays?`Log Ln With Account`:`Log Ln With Mobile`}}</span>
+        </div>
+      </div>
+      <div class="boxLine">
+        Or
+      </div>
+      <div class="loginForm">
+        <div class="loginFormWrap">
+          <transition name="fade">
+            <div class="userNameLogin loginFormContent" v-if="!isMobileWays">
+              <nav-input :inputType = '`账号/用户名/邮箱`'></nav-input>
+              <nav-input :inputType = '`密码`'></nav-input>
+            </div>
+          </transition>
+          <transition name="fade">
+            <div class="mobileLogin loginFormContent" v-if="isMobileWays">
+              <nav-input :inputType = '`大陆手机号码`'></nav-input>
+              <div class="sendCodeWrap">
+                <nav-input :inputType = '`验证码`'></nav-input>
+                <div class="sendCodeButton" @click="sendCode">
+                  <span v-if="!isSendCode" class="sendCodeButtonSpan">Send</span>
+                  <span v-else class="countDownSpan">{{countdown}}</span>
+                </div>
               </div>
             </div>
-          </div>
-        </transition>
+          </transition>
+        </div>
+      </div>
+      <div class="loginWays" >
+        <div class="loginSubmit" v-showRipple="`rgba(113,164,183,0.3)`">
+          <span class="mobileWaysSpan">Log Ln </span>
+        </div>
+      </div>
+      <div class="bottomLine"></div>
+      <div class="signUpButton" >
+        <span @click="changeLoginOrUp">Sign Up</span>
       </div>
     </div>
-    <div class="loginWays" >
-      <div class="mobileWays loginSubmit" v-showRipple="`rgba(113,164,183,0.3)`">
-        <span class="mobileWaysSpan">Log Ln </span>
+  </transition>
+  <transition name="box">
+    <div  v-if="!showLoginBox" class="loginContainer ">
+      <div class="closeLogin">
+        <img class="closeImg" src="src/assets/image/close.png" @click="closeLogInBox">
+      </div>
+      <div class="loginForm signUpForm">
+        <div class="loginFormWrap">
+          <transition name="fade">
+            <div class="userNameLogin loginFormContent" v-if="!isMobileWays">
+              <nav-input :inputType = '`用户名`'></nav-input>
+              <nav-input :inputType = '`密码`'></nav-input>
+              <nav-input :inputType = '`重复密码`'></nav-input>
+            </div>
+          </transition>
+        </div>
+      </div>
+      <div class="loginWays" >
+        <div class="loginSubmit" v-showRipple="`rgba(113,164,183,0.3)`">
+          <span class="mobileWaysSpan">Sign Up</span>
+        </div>
+      </div>
+      <div class="bottomLine"></div>
+      <div class="signUpButton" >
+        <span @click="changeLoginOrUp">Log In</span>
       </div>
     </div>
-    <div class="bottomLine"></div>
-    <div class="signUpButton">
-      <span>Sign Up</span>
-    </div>
-  </div>
+  </transition>
 </template>
 
 <script lang="ts">
@@ -68,6 +97,11 @@ export default defineComponent({
           dom.style.cursor = 'not-allowed'
         })
       }
+    }
+    let showLoginBox = ref(true)
+    //切换登录注册
+    function changeLoginOrUp() {
+      showLoginBox.value = !showLoginBox.value
     }
     let isSendCode = ref(false)
     //倒计时
@@ -101,7 +135,9 @@ export default defineComponent({
       isMobileWays,
       sendCode,
       isSendCode,
-      countdown
+      countdown,
+      showLoginBox,
+      changeLoginOrUp
     }
   }
 })
@@ -122,7 +158,6 @@ export default defineComponent({
   z-index: 2;
   top: 50%;
   left: 50%;
-  //color: rgba(3, 43, 82, 0.99);
   background-color: #f8f2f2;
   transform: translate(-50% ,-50%);
   width: 300px;
@@ -138,8 +173,8 @@ export default defineComponent({
     justify-content: flex-end;
     margin-bottom: 10px;
     .closeImg{
-      width: 15px;
-      height: 15px;
+      width: 12px;
+      height: 12px;
       cursor: pointer;
       transition: all .2s;
     }
@@ -149,14 +184,14 @@ export default defineComponent({
   }
   .loginWays{
     width: 100%;
-    height: 50px;
+    height: 40px;
     position: relative;
     margin-bottom: 5px;
     .mobileWays{
       position: absolute;
       top: 0;
       width: 100%;
-      height: 50px;
+      height: 40px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -172,12 +207,41 @@ export default defineComponent({
       }
     }
     .loginSubmit{
+      width: 100%;
+      height: 40px;
+      position: absolute;
+      top: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all .3s;
       background-color: #4F35FDFF;
       color: rgb(189, 217, 252);
+      overflow: hidden;
+      .mobileWaysSpan{
+        font-size: 16px;
+        user-select: none;
+      }
+    }
+    .loginSubmit:hover{
+      box-shadow:  0 8px 24px rgb(172, 175, 176), 0 0 0  currentColor;
+      top:-3px
     }
     .mobileWays:hover{
       box-shadow:  0 8px 24px rgb(172, 175, 176), 0 0 0  currentColor;
-      top: -5px;
+      transform: translateY(-10%);
+    }
+  }
+  .signUpWays{
+    height: 90px;
+    .signUpWaysItem{
+      margin-bottom: 10px;
+    }
+    .EmailWays{
+      color: #524db7;
+      background-color: #aedbf6;
     }
   }
   .boxLine{
@@ -203,7 +267,7 @@ export default defineComponent({
     }
   }
   .loginForm{
-    height: 120px;
+    height: 100px;
     .loginFormWrap{
       width: 100%;
       height: 100%;
@@ -217,7 +281,7 @@ export default defineComponent({
           justify-content: space-between;
           .sendCodeButton{
             width: 35%;
-            height: 50px;
+            height: 40px;
             border-radius: 10px;
             background-color: #0e3e98;
             display: flex;
@@ -240,6 +304,9 @@ export default defineComponent({
       }
     }
   }
+  .signUpForm{
+    height: 150px;
+  }
   .bottomLine{
     background-color: #666666;
     width: 100%;
@@ -255,6 +322,9 @@ export default defineComponent({
     }
   }
 }
+.signUpContainer{
+
+}
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
@@ -263,5 +333,15 @@ export default defineComponent({
 .fade-enter-active,
 .fade-leave-active {
   transition: all .2s ;
+}
+.box-enter,.box-leave-to{
+  transform: translate(-50%,5%) scale(.6);
+  opacity: 0;
+}
+.box-enter-to,.box-leave{
+  opacity: 1;
+}
+.box-enter-active,.box-leave-active{
+  transition: all .5s;
 }
 </style>

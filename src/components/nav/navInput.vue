@@ -36,7 +36,7 @@ export default defineComponent({
 <style scoped lang="scss">
 .navInputContainer{
   width: 100%;
-  height: 50px;
+  height: 40px;
   border-radius: 10px;
   border: 1px solid rgb(24, 123, 246);
   display: flex;
