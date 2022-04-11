@@ -7,7 +7,7 @@ export default {
                     let x = e.clientX - el.getBoundingClientRect().left
                     let y = e.clientY - el.getBoundingClientRect().top
                     //在鼠标位置增加一个span标签
-                    let span = document.createElement("span")
+                    let span:any = document.createElement("span")
                     span.style.position = "absolute"
                     span.style.background = binding.value
                     span.style.opacity = 0.8;

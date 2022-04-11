@@ -1,6 +1,10 @@
 <template>
   <div :class="{'navInputContainer':true,'inputFocus':isFocus,'codeWidth':smallSize}" >
-    <input @focus="isFocus = true" @blur="isFocus = false" class="navInput" :placeholder="props.inputType"/>
+    <input @focus="isFocus = true"
+           @blur="isFocus = false"
+           @input='inputRes'
+           :value="modelValue"
+           class="navInput" :placeholder="props.inputType"/>
   </div>
 </template>
 
@@ -9,15 +13,17 @@ import {defineComponent, onMounted, toRefs, ref} from 'vue';
 
 export default defineComponent({
   props:{
-    inputType:String
+    inputType:String,
+    modelValue:String
   },
-  setup(props) {
-    const {inputType} = toRefs(props)
+  setup(props,context) {
+    const {inputType,modelValue} = toRefs(props)
     let isFocus = ref(false)
-    function inputFocus() {
-
-    }
     const smallSize = ref(false)
+    //输入事件
+    function inputRes(e:any) {
+      context.emit("update:modelValue",e.target.value)
+    }
     onMounted(() => {
       if(inputType.value === '验证码') {
         smallSize.value = true
@@ -25,9 +31,10 @@ export default defineComponent({
     })
     return {
       props,
-      inputFocus,
       isFocus,
-      smallSize
+      smallSize,
+      inputRes,
+      modelValue
     }
   }
 })

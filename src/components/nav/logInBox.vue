@@ -3,7 +3,7 @@
   <transition name="box">
     <div v-if="showLoginBox" class="loginContainer">
       <div class="closeLogin">
-        <img class="closeImg" src="src/assets/image/close.png" @click="closeLogInBox">
+        <img class="closeImg" src="../../assets/image/close.png" @click="closeLogInBox">
       </div>
       <div class="loginWays" >
         <div class="mobileWays"  @click="changeWays">
@@ -17,15 +17,15 @@
         <div class="loginFormWrap">
           <transition name="fade">
             <div class="userNameLogin loginFormContent" v-if="!isMobileWays">
-              <nav-input :inputType = '`账号/用户名/邮箱`'></nav-input>
-              <nav-input :inputType = '`密码`'></nav-input>
+              <nav-input v-model="account" :inputType = '`账号/用户名/邮箱`'></nav-input>
+              <nav-input v-model="passWord" :inputType = '`密码`'></nav-input>
             </div>
           </transition>
           <transition name="fade">
             <div class="mobileLogin loginFormContent" v-if="isMobileWays">
-              <nav-input :inputType = '`大陆手机号码`'></nav-input>
+              <nav-input :inputType = '`大陆手机号码`' v-model="phoneNum"></nav-input>
               <div class="sendCodeWrap">
-                <nav-input :inputType = '`验证码`'></nav-input>
+                <nav-input :inputType = '`验证码`' v-model="verifyCode"></nav-input>
                 <div class="sendCodeButton" @click="sendCode">
                   <span v-if="!isSendCode" class="sendCodeButtonSpan">Send</span>
                   <span v-else class="countDownSpan">{{countdown}}</span>
@@ -36,7 +36,7 @@
         </div>
       </div>
       <div class="loginWays" >
-        <div class="loginSubmit" v-showRipple="`rgba(113,164,183,0.3)`">
+        <div class="loginSubmit" @click="loginEvent" v-showRipple="`rgba(113,164,183,0.3)`">
           <span class="mobileWaysSpan">Log Ln </span>
         </div>
       </div>
@@ -49,21 +49,21 @@
   <transition name="box">
     <div  v-if="!showLoginBox" class="loginContainer ">
       <div class="closeLogin">
-        <img class="closeImg" src="src/assets/image/close.png" @click="closeLogInBox">
+        <img class="closeImg" src="../../assets/image/close.png" @click="closeLogInBox">
       </div>
       <div class="loginForm signUpForm">
         <div class="loginFormWrap">
           <transition name="fade">
-            <div class="userNameLogin loginFormContent" v-if="!isMobileWays">
-              <nav-input :inputType = '`用户名`'></nav-input>
-              <nav-input :inputType = '`密码`'></nav-input>
-              <nav-input :inputType = '`重复密码`'></nav-input>
+            <div class="userNameLogin loginFormContent">
+              <nav-input v-model="signUpDate.account" :inputType = '`用户名`'></nav-input>
+              <nav-input v-model="signUpDate.passWord" :inputType = '`密码`'></nav-input>
+              <nav-input v-model="signUpDate.reactivePassWord" :inputType = '`重复密码`'></nav-input>
             </div>
           </transition>
         </div>
       </div>
       <div class="loginWays" >
-        <div class="loginSubmit" v-showRipple="`rgba(113,164,183,0.3)`">
+        <div class="loginSubmit" @click="signUpEvent" v-showRipple="`rgba(113,164,183,0.3)`">
           <span class="mobileWaysSpan">Sign Up</span>
         </div>
       </div>
@@ -76,7 +76,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, ref, nextTick} from 'vue';
+import {defineComponent, ref, nextTick, reactive} from 'vue';
 import bus from 'vue3-eventbus'
 import NavInput from "./navInput.vue";
 
@@ -87,8 +87,12 @@ export default defineComponent({
       bus.emit('closeLoginBox')
     }
     let isMobileWays = ref(false)
-    //切换手机登录
+    //切换登录方式
     function changeWays() {
+      account.value = ''
+      passWord.value = ''
+      phoneNum.value = ''
+      verifyCode.value = ''
       isMobileWays.value = !isMobileWays.value
       if(isSendCode.value) {
         nextTick(() => {
@@ -120,7 +124,6 @@ export default defineComponent({
         if(countdown.value > 0){
           countdown.value --
         }else{
-          console.log('===2=43=')
           isSendCode.value = false
           countdown.value = 10
           dom.style.backgroundColor = '#0e3e98'
@@ -128,6 +131,33 @@ export default defineComponent({
           clearInterval(timer)
         }
       },1000)
+    }
+    //提交表单
+    let phoneNum = ref('')
+    let account = ref('')
+    let passWord = ref('')
+    //验证码
+    let verifyCode = ref('')
+    let signUpDate = reactive({
+      account:'',
+      passWord:'',
+      reactivePassWord:''
+    })
+    //登录
+    function loginEvent() {
+      console.log('==123==')
+      console.log(isMobileWays)
+      if(isMobileWays.value) {
+        //手机验证码登录
+        console.log(phoneNum.value,verifyCode.value)
+      }else {
+        //账号密码登录
+        console.log(account.value,passWord.value)
+      }
+    }
+    //注册
+    function signUpEvent() {
+      console.log(signUpDate)
     }
     return {
       closeLogInBox,
@@ -137,7 +167,14 @@ export default defineComponent({
       isSendCode,
       countdown,
       showLoginBox,
-      changeLoginOrUp
+      changeLoginOrUp,
+      phoneNum,
+      account,
+      passWord,
+      verifyCode,
+      signUpDate,
+      loginEvent,
+      signUpEvent,
     }
   }
 })
