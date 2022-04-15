@@ -13,12 +13,17 @@
       <div class="boxLine">
         Or
       </div>
+      <div v-if="promptState" class="promptBox">
+        <div class="promptBoxWrap">
+          <span class="promptBoxText">{{promptText}}</span>
+        </div>
+      </div>
       <div class="loginForm">
         <div class="loginFormWrap">
           <transition name="fade">
             <div class="userNameLogin loginFormContent" v-if="!isMobileWays">
-              <nav-input v-model="account" :inputType = '`账号/用户名/邮箱`'></nav-input>
-              <nav-input v-model="passWord" :inputType = '`密码`'></nav-input>
+              <nav-input name="account" :rule="rules" v-model="account" :inputType = '`账号/用户名/邮箱`'></nav-input>
+              <nav-input v-model="passWord" type="password" :inputType = '`密码`'></nav-input>
             </div>
           </transition>
           <transition name="fade">
@@ -51,11 +56,16 @@
       <div class="closeLogin">
         <img class="closeImg" src="../../assets/image/close.png" @click="closeLogInBox">
       </div>
+      <div v-if="promptState" class="promptBox">
+        <div class="promptBoxWrap">
+          <span class="promptBoxText">{{promptText}}</span>
+        </div>
+      </div>
       <div class="loginForm signUpForm">
         <div class="loginFormWrap">
           <transition name="fade">
             <div class="userNameLogin loginFormContent">
-              <nav-input v-model="signUpDate.account" :inputType = '`用户名`'></nav-input>
+              <nav-input name="account" :rule="rules" v-model="signUpDate.account" :inputType = '`用户名`'></nav-input>
               <nav-input v-model="signUpDate.passWord" :inputType = '`密码`'></nav-input>
               <nav-input v-model="signUpDate.reactivePassWord" :inputType = '`重复密码`'></nav-input>
             </div>
@@ -83,16 +93,19 @@ import NavInput from "./navInput.vue";
 export default defineComponent({
   components: {NavInput},
   setup() {
+    const rules = [
+      {name:'account',required:true,trigger:'blur'},
+      {name:'password',required:true,trigger:'blur'},
+      {name:'phoneNum',required:true,trigger:'blur'},
+      {name:'code',required:true,trigger:'blur'},
+    ]
     function closeLogInBox() {
       bus.emit('closeLoginBox')
     }
     let isMobileWays = ref(false)
     //切换登录方式
     function changeWays() {
-      account.value = ''
-      passWord.value = ''
-      phoneNum.value = ''
-      verifyCode.value = ''
+      initialFrom()
       isMobileWays.value = !isMobileWays.value
       if(isSendCode.value) {
         nextTick(() => {
@@ -108,8 +121,7 @@ export default defineComponent({
       showLoginBox.value = !showLoginBox.value
     }
     let isSendCode = ref(false)
-    //倒计时
-    let countdown = ref(10)
+    let countdown = ref(10)    //倒计时
     let timer:any
     //发送验证码
     function sendCode() {
@@ -136,8 +148,9 @@ export default defineComponent({
     let phoneNum = ref('')
     let account = ref('')
     let passWord = ref('')
-    //验证码
-    let verifyCode = ref('')
+    let verifyCode = ref('')  //验证码
+    let promptText = ref('') //提示词
+    let promptState = ref(false) //提示框状态
     let signUpDate = reactive({
       account:'',
       passWord:'',
@@ -145,12 +158,16 @@ export default defineComponent({
     })
     //登录
     function loginEvent() {
-      console.log('==123==')
-      console.log(isMobileWays)
       if(isMobileWays.value) {
+        if(phoneNum || verifyCode) {
+          openPromptBox('请输入手机号或者验证码')
+        }
         //手机验证码登录
         console.log(phoneNum.value,verifyCode.value)
       }else {
+        if(account || passWord) {
+          openPromptBox('请输入手机号或者验证码')
+        }
         //账号密码登录
         console.log(account.value,passWord.value)
       }
@@ -158,6 +175,20 @@ export default defineComponent({
     //注册
     function signUpEvent() {
       console.log(signUpDate)
+    }
+    //打开提示框
+    function openPromptBox(res:string) {
+      promptState.value = true
+      promptText.value = res
+    }
+    //初始化
+    function initialFrom() {
+      account.value = ''
+      passWord.value = ''
+      phoneNum.value = ''
+      verifyCode.value = ''
+      promptState.value = false
+      promptText.value = ''
     }
     return {
       closeLogInBox,
@@ -175,6 +206,10 @@ export default defineComponent({
       signUpDate,
       loginEvent,
       signUpEvent,
+      promptText,
+      promptState,
+      openPromptBox,
+      rules
     }
   }
 })
@@ -301,6 +336,30 @@ export default defineComponent({
       height: 1px;
       content: '';
       background-color: #666666;
+    }
+  }
+  .promptBox{
+    width: 100%;
+    background-color: red;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    .promptBoxWrap{
+      width: 98%;
+      border: 1px solid red;
+      margin-left: 2%;
+      border-radius: 4px;
+      background-color: #e6e6ea;
+      padding-top: 5px;
+      padding-bottom: 5px;
+      padding-left: 10px;
+      display: flex;
+      align-items: center;
+      .promptBoxText{
+        display: inline-block;
+        width: 100%;
+        font-size: 12px;
+        font-weight: bolder;
+      }
     }
   }
   .loginForm{
