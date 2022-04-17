@@ -22,27 +22,39 @@
         <div class="loginFormWrap">
           <transition name="fade">
             <div class="userNameLogin loginFormContent" v-if="!isMobileWays">
-              <nav-input name="account" :rule="rules" v-model="account" :inputType = '`账号/用户名/邮箱`'></nav-input>
-              <nav-input v-model="passWord" type="password" :inputType = '`密码`'></nav-input>
+              <my-form ref="accountLoginForm" :rules="rules" :model="{account,passWord}">
+                <my-form-item prop="account">
+                  <nav-input  v-model="account" :inputType = '`账号/用户名/邮箱`'></nav-input>
+                </my-form-item>
+                <my-form-item prop="passWord">
+                  <nav-input  v-model="passWord" type="password" :inputType = '`密码`'></nav-input>
+                </my-form-item>
+              </my-form>
             </div>
           </transition>
           <transition name="fade">
             <div class="mobileLogin loginFormContent" v-if="isMobileWays">
-              <nav-input :inputType = '`大陆手机号码`' v-model="phoneNum"></nav-input>
-              <div class="sendCodeWrap">
-                <nav-input :inputType = '`验证码`' v-model="verifyCode"></nav-input>
-                <div class="sendCodeButton" @click="sendCode">
-                  <span v-if="!isSendCode" class="sendCodeButtonSpan">Send</span>
-                  <span v-else class="countDownSpan">{{countdown}}</span>
+              <my-form ref="mobileLoginForm" :rules="rules" :model="{phoneNum,verifyCode}">
+                <my-form-item prop="phoneNum">
+                  <nav-input :inputType = '`大陆手机号码`' v-model="phoneNum"></nav-input>
+                </my-form-item>
+                <div class="sendCodeWrap">
+                  <my-form-item prop="verifyCode">
+                    <nav-input :inputType = '`验证码`' v-model="verifyCode"></nav-input>
+                  </my-form-item>
+                  <div class="sendCodeButton" @click="sendCode">
+                    <span v-if="!isSendCode" class="sendCodeButtonSpan">Send</span>
+                    <span v-else class="countDownSpan">{{countdown}}</span>
+                  </div>
                 </div>
-              </div>
+              </my-form>
             </div>
           </transition>
         </div>
       </div>
       <div class="loginWays" >
         <div class="loginSubmit" @click="loginEvent" v-showRipple="`rgba(113,164,183,0.3)`">
-          <span class="mobileWaysSpan">Log Ln </span>
+          <span class="mobileWaysSpan">Log Ln</span>
         </div>
       </div>
       <div class="bottomLine"></div>
@@ -65,9 +77,17 @@
         <div class="loginFormWrap">
           <transition name="fade">
             <div class="userNameLogin loginFormContent">
-              <nav-input name="account" :rule="rules" v-model="signUpDate.account" :inputType = '`用户名`'></nav-input>
-              <nav-input v-model="signUpDate.passWord" :inputType = '`密码`'></nav-input>
-              <nav-input v-model="signUpDate.reactivePassWord" :inputType = '`重复密码`'></nav-input>
+              <my-form ref="signUpForm" :rules="rules" :model="signUpDate">
+                <my-form-item prop="signUpAccount">
+                  <nav-input v-model="signUpDate.signUpAccount" :inputType = '`用户名`'></nav-input>
+                </my-form-item>
+                <my-form-item prop="signUpPassWord">
+                  <nav-input v-model="signUpDate.signUpPassWord" :inputType = '`密码`'></nav-input>
+                </my-form-item>
+                <my-form-item prop="signUpReactivePassWord">
+                  <nav-input v-model="signUpDate.signUpReactivePassWord" :inputType = '`重复密码`'></nav-input>
+                </my-form-item>
+              </my-form>
             </div>
           </transition>
         </div>
@@ -89,16 +109,50 @@
 import {defineComponent, ref, nextTick, reactive} from 'vue';
 import bus from 'vue3-eventbus'
 import NavInput from "./navInput.vue";
+import MyForm from "../myComp/myForm.vue";
+import MyFormItem from "../myComp/myFormItem.vue";
 
 export default defineComponent({
-  components: {NavInput},
+  components: {MyFormItem, MyForm, NavInput},
   setup() {
-    const rules = [
-      {name:'account',required:true,trigger:'blur'},
-      {name:'password',required:true,trigger:'blur'},
-      {name:'phoneNum',required:true,trigger:'blur'},
-      {name:'code',required:true,trigger:'blur'},
-    ]
+    const rules = {
+      account:{
+        required: true,
+        max: 100,
+        trigger:'blur'
+      },
+      passWord:{
+        required: true,
+        max:255,
+        trigger:'blur'
+      },
+      phoneNum:{
+        required: true,
+        max: 11,
+        pattern:/^[1]([3-9])[0-9]{9}$/,
+        trigger:'blur'
+      },
+      verifyCode:{
+        required: true,
+        max: 4,
+        trigger:'blur'
+      },
+      signUpAccount:{
+        required: true,
+        max: 100,
+        trigger:'blur'
+      },
+      signUpPassWord:{
+        required: true,
+        max: 255,
+        trigger:'blur'
+      },
+      signUpReactivePassWord:{
+        required: true,
+        max: 255,
+        trigger:'blur'
+      },
+    }
     function closeLogInBox() {
       bus.emit('closeLoginBox')
     }
@@ -121,7 +175,7 @@ export default defineComponent({
       showLoginBox.value = !showLoginBox.value
     }
     let isSendCode = ref(false)
-    let countdown = ref(10)    //倒计时
+    let countdown = ref(3)    //倒计时
     let timer:any
     //发送验证码
     function sendCode() {
@@ -136,8 +190,9 @@ export default defineComponent({
         if(countdown.value > 0){
           countdown.value --
         }else{
+          dom = document.querySelector('.sendCodeButton')
           isSendCode.value = false
-          countdown.value = 10
+          countdown.value = 3
           dom.style.backgroundColor = '#0e3e98'
           dom.style.cursor = 'pointer'
           clearInterval(timer)
@@ -152,29 +207,43 @@ export default defineComponent({
     let promptText = ref('') //提示词
     let promptState = ref(false) //提示框状态
     let signUpDate = reactive({
-      account:'',
-      passWord:'',
-      reactivePassWord:''
+      signUpAccount:'',
+      signUpPassWord:'',
+      signUpReactivePassWord:''
     })
+    const accountLoginForm:any = ref(null)
+    const mobileLoginForm:any = ref(null)
+    const signUpForm:any = ref(null)
     //登录
     function loginEvent() {
+      promptState.value = false
       if(isMobileWays.value) {
-        if(phoneNum || verifyCode) {
-          openPromptBox('请输入手机号或者验证码')
-        }
+        mobileLoginForm.value.validate((res:boolean) => {
+          console.log(res,'===w=4=2===')
+        })
         //手机验证码登录
         console.log(phoneNum.value,verifyCode.value)
       }else {
-        if(account || passWord) {
-          openPromptBox('请输入手机号或者验证码')
-        }
         //账号密码登录
+        accountLoginForm.value.validate((res:boolean) => {
+          console.log(res,'===w=4=2===')
+        })
         console.log(account.value,passWord.value)
       }
     }
     //注册
     function signUpEvent() {
-      console.log(signUpDate)
+      promptState.value = false
+      signUpForm.value.validate((res:boolean) => {
+        if(res) {
+          if(signUpDate.signUpReactivePassWord !== signUpDate.signUpPassWord) {
+            openPromptBox('输入的密码不一致')
+          }else {
+
+          }
+        }
+      })
+
     }
     //打开提示框
     function openPromptBox(res:string) {
@@ -209,7 +278,10 @@ export default defineComponent({
       promptText,
       promptState,
       openPromptBox,
-      rules
+      rules,
+      accountLoginForm,
+      mobileLoginForm,
+      signUpForm
     }
   }
 })
@@ -419,7 +491,6 @@ export default defineComponent({
   }
 }
 .signUpContainer{
-
 }
 .fade-enter-from,
 .fade-leave-to {

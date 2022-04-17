@@ -1,16 +1,17 @@
 <template>
   <div :class="{'navInputContainer':true,'inputFocus':isFocus,'codeWidth':smallSize}" >
     <input @focus="isFocus = true"
-           @blur="isFocus = false"
+           @blur="handelBlur"
            :type="props.type"
-           @input='inputRes'
+           @input='handelChange'
            :value="modelValue"
            class="navInput" :placeholder="props.inputType"/>
   </div>
 </template>
 
 <script lang="ts">
-import {defineComponent, onMounted, toRefs, ref} from 'vue';
+import {defineComponent, onMounted, toRefs, ref, inject, nextTick} from 'vue';
+import bus from 'vue3-eventbus'
 
 export default defineComponent({
   props:{
@@ -18,46 +19,45 @@ export default defineComponent({
     type:String,
     modelValue:String,
     name:String,
-    rule:Array
-  },
-  setup(props,context) {
-    const {inputType,modelValue,name,rule} = toRefs(props)
+   },
+  setup(props,{emit}) {
+    const {inputType,modelValue,name} = toRefs(props)
     let isFocus = ref(false)
     let smallSize = ref(false)
-    let myRule:any = ref({})
     let inputVal = ref('')
+    const myFormItem:any = inject('myFormItem')
+    let trigger = myFormItem?.trigger?.split(' ')
     //输入事件
-    function inputRes(e:any) {
+    function handelChange(e:any) {
       inputVal.value = e.target.value
-      context.emit("update:modelValue",e.target.value)
+      emit("update:modelValue",e.target.value)
+      nextTick(() => {
+        if(trigger.includes('change')) {
+          myFormItem && bus.emit(`validate_${myFormItem.name}`)
+        }
+      })
     }
-    //表单验证
-    function verify() {
-      let wrap:any = document.querySelector('.navInputContainer')
-      if(myRule.value.required && !inputVal.value) {
-        wrap.style.border = '1px solid red'
-      }
+    //失去焦点
+    function handelBlur() {
+      isFocus.value = false
+      nextTick(() => {
+        if(trigger.includes('blur')) {
+          myFormItem && bus.emit(`validate_${myFormItem.name}`)
+        }
+      })
     }
     onMounted(() => {
       if(inputType.value === '验证码') {
         smallSize.value = true
-      }
-      rule.value?.forEach((item:any) => {
-        if(item.name === name.value) {
-          myRule.value = item
-        }
-      })
-      if(myRule.value){
-        let dom:any = document.querySelector('.navInput')
-        dom.addEventListener(myRule.value.trigger,verify)
       }
     })
     return {
       props,
       isFocus,
       smallSize,
-      inputRes,
-      modelValue
+      handelChange,
+      modelValue,
+      handelBlur
     }
   }
 })
@@ -88,6 +88,6 @@ export default defineComponent({
   box-shadow:  0 0 0 3px rgba(3,102,214,0.3);
 }
 .codeWidth {
-  width: 60%;
+  width: 135px;
 }
 </style>

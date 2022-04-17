@@ -8,6 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "async-validator": "^4.0.7",
     "autoprefixer": "^10.4.4",
     "lodash": "^4.17.21",
     "pinia": "^2.0.13",
