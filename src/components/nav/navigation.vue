@@ -1,26 +1,29 @@
 <template>
-  <div class="navContainer">
-    <div class="iconWrap"></div>
+  <div :class="{'navContainer':true,'navContainerDown':!isTop}">
+    <div class="iconWrap">
+      <img class="navIcon" src="../../assets/image/icon.png" alt="">
+      <span :class="{'iconText':true,'iconTextTop':isTop}">Salt-Space</span>
+    </div>
     <div class="contentWrap">
       <div class="linkWrap">
-        <span>PhotoWall</span>
+        <span :class="{'inTopSpan':isTop}">LifeStyle</span>
         <div class="hoverBox _center"></div>
-        <div class="hoverBox "></div>
+        <div :class="{'hoverBox':true,'hoverBoxTop':isTop}"></div>
       </div>
       <div class="linkWrap">
-        <span>GameCenter</span>
+        <span :class="{'inTopSpan':isTop}">GameCenter</span>
         <div class="hoverBox _center"></div>
-        <div class="hoverBox "></div>
+        <div :class="{'hoverBox':true,'hoverBoxTop':isTop}"></div>
       </div>
       <div class="linkWrap">
-        <span>Study</span>
+        <span :class="{'inTopSpan':isTop}">Study</span>
         <div class="hoverBox _center"></div>
-        <div class="hoverBox "></div>
+        <div :class="{'hoverBox':true,'hoverBoxTop':isTop}"></div>
       </div>
       <div class="linkWrap" @click="clickShowLgoInBox">
-        <span>Log in</span>
+        <span :class="{'inTopSpan':isTop}">Log in</span>
         <div class="hoverBox _center"></div>
-        <div class="hoverBox "></div>
+        <div :class="{'hoverBox':true,'hoverBoxTop':isTop}"></div>
       </div>
     </div>
     <log-in-box v-if="showLgoInBox"></log-in-box>
@@ -35,10 +38,20 @@ import LogInBox from "./logInBox.vue";
 export default defineComponent({
   components: {LogInBox},
   setup() {
+    let isTop = ref(true)
     onMounted(()=>{
       bus.on('closeLoginBox',()=>{
         showLgoInBox.value = false
       })
+      window.addEventListener('scroll',() => {
+        let bannerHeight = (document.querySelector('.bannerContainer') as any).clientHeight
+        let navHeight = (document.querySelector('.navContainer') as any).clientHeight
+        let t = document.documentElement.scrollTop
+        if(bannerHeight && navHeight && t) {
+          isTop.value = t <= bannerHeight - navHeight;
+        }
+      })
+
     })
     let showLgoInBox = ref(false)
     function clickShowLgoInBox() {
@@ -46,7 +59,8 @@ export default defineComponent({
     }
     return {
       showLgoInBox,
-      clickShowLgoInBox
+      clickShowLgoInBox,
+      isTop
     }
   }
 })
@@ -56,15 +70,29 @@ export default defineComponent({
 .navContainer{
   width: 100%;
   height: 70px;
-  border: 1px solid red;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: fixed;
+  top: 0;
+  transition: all .5s;
   .iconWrap{
     height: 40px;
-    width: 100px;
-    border: 1px solid red;
     margin-left: 20px;
+    display: flex;
+    align-items: center;
+    .navIcon{
+      height: 40px;
+      width: 40px;
+    }
+    .iconText{
+      transition: all .5s;
+      font-size: 16px;
+      margin-left: 5px;
+    }
+    .iconTextTop{
+      color: white;
+    }
   }
   .contentWrap{
     height: 40px;
@@ -77,6 +105,7 @@ export default defineComponent({
       cursor: pointer;
       font-size: 16px;
       span{
+        transition: all .5s;
       }
       .hoverBox{
         height: 0;
@@ -84,8 +113,11 @@ export default defineComponent({
         transition: height .2s;
         transform-origin: bottom;
       }
-      ._center{
+      .hoverBoxTop{
         background-color: white;
+      }
+      ._center{
+        background-color: rgba(255, 255, 255, 0);
       }
     }
     .linkWrap:hover {
@@ -94,5 +126,12 @@ export default defineComponent({
       }
     }
   }
+}
+.inTopSpan{
+  color: white;
+}
+.navContainerDown{
+  background-color: white;
+  box-shadow:  0 2px 8px 0 rgba(99,99,99,0.2);
 }
 </style>

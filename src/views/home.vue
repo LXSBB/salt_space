@@ -1,12 +1,10 @@
 <template>
   <div class="homeContainer">
+    <header-banner></header-banner>
+
 <!--    <span>{{ homeStore.num }}</span>-->
 <!--    <button @click="click">click</button>-->
 <!--    <span>{{myNum}}</span>-->
-    <div class="a1"></div>
-    <div class="a1"></div>
-    <div class="a1"></div>
-    <div class="a1"></div>
   </div>
 </template>
 
@@ -14,8 +12,10 @@
 import {defineComponent,ref} from 'vue';
 import {useHomeStore} from "../store/home_store";
 import bus from 'vue3-eventbus'
+import HeaderBanner from "../components/headerBanner/headerBanner.vue";
 
 export default defineComponent({
+  components: {HeaderBanner},
   setup() {
     const homeStore:any = useHomeStore()
     const myNum = ref(1)
@@ -46,8 +46,7 @@ export default defineComponent({
   width: 100%;
   height: 3000px;
   display: flex;
-  justify-content:space-around ;
-  border: 1px solid blue;
+  flex-direction: column;
   .a1{
     min-width: 140px;
     width: 300px;
