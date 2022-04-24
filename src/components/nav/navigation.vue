@@ -68,6 +68,7 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .navContainer{
+  min-width: 1000px;
   width: 100%;
   height: 70px;
   display: flex;
@@ -75,7 +76,7 @@ export default defineComponent({
   align-items: center;
   position: fixed;
   top: 0;
-  transition: all .5s;
+  transition: all .3s;
   .iconWrap{
     height: 40px;
     margin-left: 20px;

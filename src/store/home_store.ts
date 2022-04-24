@@ -1,17 +1,17 @@
 import { defineStore } from 'pinia'
-
+import Type from '../types/types'
 export const useHomeStore = defineStore('home', {
     state: () => ({
-        num:2
+        nowTopic:1
     }),
     getters: {
-        countPow2(state) {
-            return state.num + 2;
-        },
+        // countPow2(state) {
+        //     return state.num + 2;
+        // },
     },
     actions: {
-        countPlusOne(msg:any) {
-            this.num+=msg;
+        changeTopic(playLoad:any) {
+            this.nowTopic = playLoad;
         },
     },
 })
