@@ -1,26 +1,26 @@
 <template>
   <div class="myTitleContainer">
     <div class="stage">
-      <div data-text="props.title" class="layer"></div>
-      <div data-text="props.title" class="layer"></div>
-      <div data-text="props.title" class="layer"></div>
-      <div data-text="props.title" class="layer"></div>
-      <div data-text="props.title" class="layer"></div>
-      <div data-text="props.title" class="layer"></div>
-      <div data-text="props.title" class="layer"></div>
-      <div data-text="props.title" class="layer"></div>
-      <div data-text="props.title" class="layer"></div>
-      <div data-text="props.title" class="layer"></div>
-      <div data-text="props.title" class="layer"></div>
-      <div data-text="props.title" class="layer"></div>
-      <div data-text="props.title" class="layer"></div>
-      <div data-text="props.title" class="layer"></div>
-      <div data-text="props.title" class="layer"></div>
-      <div data-text="props.title" class="layer"></div>
-      <div data-text="props.title" class="layer"></div>
-      <div data-text="props.title" class="layer"></div>
-      <div data-text="props.title" class="layer"></div>
-      <div data-text="props.title" class="layer"></div>
+      <div :data-text="props.title" class="layer"></div>
+      <div :data-text="props.title" class="layer"></div>
+      <div :data-text="props.title" class="layer"></div>
+      <div :data-text="props.title" class="layer"></div>
+      <div :data-text="props.title" class="layer"></div>
+      <div :data-text="props.title" class="layer"></div>
+      <div :data-text="props.title" class="layer"></div>
+      <div :data-text="props.title" class="layer"></div>
+      <div :data-text="props.title" class="layer"></div>
+      <div :data-text="props.title" class="layer"></div>
+      <div :data-text="props.title" class="layer"></div>
+      <div :data-text="props.title" class="layer"></div>
+      <div :data-text="props.title" class="layer"></div>
+      <div :data-text="props.title" class="layer"></div>
+      <div :data-text="props.title" class="layer"></div>
+      <div :data-text="props.title" class="layer"></div>
+      <div :data-text="props.title" class="layer"></div>
+      <div :data-text="props.title" class="layer"></div>
+      <div :data-text="props.title" class="layer"></div>
+      <div :data-text="props.title" class="layer"></div>
     </div>
   </div>
 </template>
@@ -67,17 +67,23 @@ export default defineComponent({
       animation: rotate 5s infinite alternate ease-in-out -7.5s;
       display: flex;
       align-items: center;
-    }
-    &::after{
-
+      justify-content: center;
+      &::after{
+        content: attr(data-text);
+      }
     }
     .layer:after{
-      text-align: center;
+      //text-align: center;
       word-wrap:break-word;
       word-break:normal;
-      font: 30px "Pacifico", "Kaushan Script", Futura, "Roboto", "Trebuchet MS", Helvetica, sans-serif;
+      font: 20px "Pacifico", "Kaushan Script", Futura, "Roboto", "Trebuchet MS", Helvetica, sans-serif;
       color: whitesmoke;
       text-shadow: 4px 0 10px rgba(0, 0, 0, 0.13);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
     }
     .layer:nth-child(1):after {
       transform: translateZ(0px);
@@ -164,7 +170,7 @@ export default defineComponent({
 
     .layer:nth-child(n+11):after {
       -webkit-text-stroke: 5px dodgerblue;
-      text-shadow: 6px 0 6px #00366b, 5px 5px 5px #002951, 0 6px 6px #00366b;
+      text-shadow: 0 0 5px #00366b;
     }
 
     .layer:nth-child(n+12):after {
@@ -172,7 +178,7 @@ export default defineComponent({
     }
 
     .layer:last-child:after {
-      -webkit-text-stroke: 17px rgba(0, 0, 0, 0.1);
+      //-webkit-text-stroke: 17px rgba(0, 0, 0, 0.1);
     }
 
     .layer:first-child:after {

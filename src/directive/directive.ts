@@ -18,8 +18,8 @@ export default {
                     let opacity = 1
                     let max_length = Math.sqrt(el.offsetWidth * el.offsetWidth + el.offsetHeight * el.offsetHeight) * 2
                     let time:any = setInterval(() => {
-                        width += 5
-                        height += 5
+                        width += 10
+                        height += 10
                         opacity -= 0.01
                         //判断超出最大值时，清除定时，并且删除span
                         if (width < max_length) {
@@ -35,6 +35,20 @@ export default {
                         }
                     }, 10)
                 })
+            }
+        });
+        //彩虹字
+        app.directive('rainBow',{
+            mounted(el:any,binding:any) {
+                let rainbowText = el
+                let letters = binding.value.split("");
+                letters.forEach((letter:string, i:number) => {
+                    let span = document.createElement("span");
+                    span.textContent = letter;
+                    span.style.animation = 'rainbow 30s alternate infinite forwards'
+                    span.style.animationDelay = `${-20 + i * 0.2}s`;
+                    rainbowText.append(span);
+                });
             }
         })
     }

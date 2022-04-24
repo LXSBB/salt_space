@@ -6,10 +6,6 @@
     <div class="homeCardsWrap">
       <home-card-item></home-card-item>
       <home-card-item></home-card-item>
-      <home-card-item></home-card-item>
-      <home-card-item></home-card-item>
-      <home-card-item></home-card-item>
-      <home-card-item></home-card-item>
     </div>
   </div>
 </template>

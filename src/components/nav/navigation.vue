@@ -6,6 +6,11 @@
     </div>
     <div class="contentWrap">
       <div class="linkWrap">
+        <span :class="{'inTopSpan':isTop}">Home</span>
+        <div class="hoverBox _center"></div>
+        <div :class="{'hoverBox':true,'hoverBoxTop':isTop}"></div>
+      </div>
+      <div class="linkWrap">
         <span :class="{'inTopSpan':isTop}">LifeStyle</span>
         <div class="hoverBox _center"></div>
         <div :class="{'hoverBox':true,'hoverBoxTop':isTop}"></div>
@@ -76,6 +81,7 @@ export default defineComponent({
   align-items: center;
   position: fixed;
   top: 0;
+  z-index: 999;
   transition: all .3s;
   .iconWrap{
     height: 40px;
