@@ -7,6 +7,9 @@
       <home-card-item></home-card-item>
       <home-card-item></home-card-item>
       <home-card-item></home-card-item>
+      <home-card-item></home-card-item>
+      <home-card-item></home-card-item>
+      <home-card-item></home-card-item>
     </div>
   </div>
 </template>
