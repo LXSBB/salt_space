@@ -46,7 +46,8 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #eef6f0;
+  background-color: #fff;
+  //background-color: #eef6f0;
 
 }
 </style>

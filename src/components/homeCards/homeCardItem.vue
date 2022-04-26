@@ -1,20 +1,25 @@
 <template>
-  <div :class="{'homeCardItemWrap':true,'isHover':isHover}">
-    <div class="userInfoWrap" v-showRipple="`#cccbcb`">
-      <div class="userContent">
-        <img class="userIcon" src="../../assets/image/icon.png" alt="">
-        <div class="userContent_right">
-          <span class="userName" v-rainBow="`LXSSG`"></span>
-          <span class="userIntroduce">宝应搬砖王</span>
+  <div class="homeCardItemWrap">
+    <div :class="{'homeCardItemWrapFront':true,'isHover':isHover&&hoverUser,'isEnter':isHover}">
+      <div class="userInfoWrap" v-showRipple="`#cccbcb`"
+           @mouseenter="isHover = hoverUser = true"
+           @mouseleave="isHover = hoverUser =  false">
+        <div class="userContent">
+          <img class="userIcon" src="../../assets/image/icon.png" alt="">
+          <div class="userContent_right">
+            <span class="userName" >LXSSG</span>
+            <span class="userIntroduce">宝应搬砖王</span>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="homeCardTitleWrap" @mouseenter="isHover = true" @mouseleave="isHover = false">
-      <my-title1 v-if="chooseTitle <= 5 " :title="`TeamViewer 系统后台被黑客组织 APT41 攻破`"></my-title1>
-      <my-title2 v-if="chooseTitle > 5" :title="`TeamViewer 系统后台被黑客组织 APT41 攻破`"></my-title2>
-    </div>
-    <div class="tagWrap">
-      <home-card-tags v-for="(item,index) in arrTag" :tag-name="item" :key="index"></home-card-tags>
+      <div class="homeCardTitleWrap" @mouseenter="isHover = true" @mouseleave="isHover = false">
+        <my-title1 v-if="chooseTitle <= 3 " :title="`TeamViewer 系统后台被黑客组织 APT41 攻破`"></my-title1>
+        <my-title2 v-if="chooseTitle > 3 && chooseTitle <= 6" :title="`TeamViewer 系统后台被黑客组织 APT41 攻破`"></my-title2>
+        <my-title3 v-if="chooseTitle > 6" :title="`TeamViewer 系统后台被黑客组织 APT41 攻破`"></my-title3>
+      </div>
+      <div class="tagWrap">
+        <home-card-tags v-for="(item,index) in arrTag" :tag-name="item" :key="index"></home-card-tags>
+      </div>
     </div>
   </div>
 </template>
@@ -24,23 +29,28 @@ import {defineComponent, onMounted, ref} from 'vue';
 import MyTitle1 from "../myTitle/myTitle1.vue";
 import MyTitle2 from "../myTitle/myTitle2.vue";
 import HomeCardTags from "./homeCardTags.vue";
+import MyTitle3 from "../myTitle/myTitle3.vue";
 
 export default defineComponent({
-  components: {HomeCardTags, MyTitle2, MyTitle1},
+  components: {MyTitle3, HomeCardTags, MyTitle2, MyTitle1},
   setup() {
     let isHover = ref(false)
+    let hoverUser = ref(false)
     let chooseTitle = ref(1)
     const arrTag = ref(['Vue',"JavaScript","Css"])
     onMounted(() => {
       chooseTitle.value =  Math.round(Math.random()*10)
     })
-    return {isHover,chooseTitle,arrTag}
+    return {isHover,chooseTitle,arrTag,hoverUser}
   }
 })
 </script>
 
 <style scoped lang="scss">
 .homeCardItemWrap{
+
+}
+.homeCardItemWrapFront{
   height: 300px;
   border: 1px solid #e1dfdf;
   border-radius: 5px;
@@ -101,14 +111,17 @@ export default defineComponent({
     display: flex;
     margin: 5px;
     position: absolute;
-    bottom: 0;
+    bottom: 5px;
     right: 0;
   }
 
 
 }
+.isEnter{
+  box-shadow:  0 5px 15px  rgba(0,0,0,0.35);
+}
 .isHover{
-  box-shadow:  0 3px 8px  rgba(0,0,0,0.24);
+  box-shadow:  8px 8px 8px  rgba(0,0,0,0.24);
   transform: translateY(-2%);
 }
 @media screen and (max-width: 1350px) {
