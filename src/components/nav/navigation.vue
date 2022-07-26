@@ -10,21 +10,21 @@
         <div class="hoverBox _center"></div>
         <div :class="{'hoverBox':true,'hoverBoxTop':isTop}"></div>
       </div>
-      <div class="linkWrap">
-        <span :class="{'inTopSpan':isTop}">LifeStyle</span>
-        <div class="hoverBox _center"></div>
-        <div :class="{'hoverBox':true,'hoverBoxTop':isTop}"></div>
-      </div>
-      <div class="linkWrap">
-        <span :class="{'inTopSpan':isTop}">GameCenter</span>
-        <div class="hoverBox _center"></div>
-        <div :class="{'hoverBox':true,'hoverBoxTop':isTop}"></div>
-      </div>
-      <div class="linkWrap">
-        <span :class="{'inTopSpan':isTop}">Study</span>
-        <div class="hoverBox _center"></div>
-        <div :class="{'hoverBox':true,'hoverBoxTop':isTop}"></div>
-      </div>
+<!--      <div class="linkWrap">-->
+<!--        <span :class="{'inTopSpan':isTop}">LifeStyle</span>-->
+<!--        <div class="hoverBox _center"></div>-->
+<!--        <div :class="{'hoverBox':true,'hoverBoxTop':isTop}"></div>-->
+<!--      </div>-->
+<!--      <div class="linkWrap">-->
+<!--        <span :class="{'inTopSpan':isTop}">GameCenter</span>-->
+<!--        <div class="hoverBox _center"></div>-->
+<!--        <div :class="{'hoverBox':true,'hoverBoxTop':isTop}"></div>-->
+<!--      </div>-->
+<!--      <div class="linkWrap">-->
+<!--        <span :class="{'inTopSpan':isTop}">Study</span>-->
+<!--        <div class="hoverBox _center"></div>-->
+<!--        <div :class="{'hoverBox':true,'hoverBoxTop':isTop}"></div>-->
+<!--      </div>-->
       <div class="linkWrap" @click="clickShowLgoInBox">
         <span :class="{'inTopSpan':isTop}">Log in</span>
         <div class="hoverBox _center"></div>
@@ -49,14 +49,9 @@ export default defineComponent({
         showLgoInBox.value = false
       })
       window.addEventListener('scroll',() => {
-        let bannerHeight = (document.querySelector('.bannerContainer') as any).clientHeight
-        let navHeight = (document.querySelector('.navContainer') as any).clientHeight
-        let t = document.documentElement.scrollTop
-        if(bannerHeight && navHeight && t) {
-          isTop.value = t <= bannerHeight - navHeight;
-        }
+        const scrollTop = document.documentElement.scrollTop || window.pageYOffset || document.body.scrollTop;
+        isTop.value = scrollTop <= 30
       })
-
     })
     let showLgoInBox = ref(false)
     function clickShowLgoInBox() {
@@ -72,6 +67,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
+@import "src/style/universal";
 .navContainer{
   min-width: 1000px;
   width: 100%;
@@ -81,7 +77,7 @@ export default defineComponent({
   align-items: center;
   position: fixed;
   top: 0;
-  z-index: 999;
+  z-index: 9999;
   transition: all .3s;
   .iconWrap{
     height: 40px;
@@ -138,7 +134,9 @@ export default defineComponent({
   color: white;
 }
 .navContainerDown{
-  background-color: white;
-  box-shadow:  0 2px 8px 0 rgba(99,99,99,0.2);
+  box-shadow: 0 3px 5px  rgba(0,0,0,0.04);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  background-color: rgba(108, 107, 107, 0.1);
 }
 </style>

@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import {defineComponent, toRefs, ref, onMounted, watch,computed} from 'vue';
-import {useHomeStore} from "../../store/home_store";
+import {useHomeStore} from "../../../store/home_store";
 
 export default defineComponent({
   props:{

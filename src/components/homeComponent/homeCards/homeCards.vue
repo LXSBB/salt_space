@@ -4,12 +4,6 @@
       <topic-but v-for="(item,index) in btuList" :prop="item" :key="index" btuName="ALL Topics" @clickBtn="clickBtn"></topic-but>
     </div>
     <div class="homeCardsWrap">
-      <home-card-item></home-card-item>
-      <home-card-item></home-card-item>
-      <home-card-item></home-card-item>
-      <home-card-item></home-card-item>
-      <home-card-item></home-card-item>
-      <home-card-item></home-card-item>
     </div>
   </div>
 </template>

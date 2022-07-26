@@ -2,12 +2,12 @@
   <div :class="{'homeCardItemContainer':true,}">
     <div :class="{'homeCardItemWrap':true,'flipped':letFlipped, 'flippedAgain':flippedAgain}" >
       <div :class="{'homeCardItemWrapFront':true,'isHover':isHover && hoverUser,'isEnter':isHover}">
-        <div class="userInfoWrap" v-showRipple="`#cccbcb`"
+        <div class="userInfoWrap"
              @click="flipped"
              @mouseenter="isHover = hoverUser = true"
              @mouseleave="isHover = hoverUser =  false">
           <div class="userContent">
-            <img class="userIcon" src="../../assets/image/icon.png" alt="">
+            <img class="userIcon" src="../../../assets/image/icon.png" alt="">
             <div class="userContent_right">
               <span class="userName" >LXSSG</span>
               <span class="userIntroduce">宝应搬砖王</span>
@@ -85,7 +85,7 @@ export default defineComponent({
     .homeCardItemWrapFront{
       width: 100%;
       height: 300px;
-      box-shadow:  0 1px 25px  rgba(0,0,0,0.16);
+      box-shadow:  0 1px 25px  rgba(0,0,0,0.1);
       border-radius: 5px;
       background-color: #ffffff;
       overflow: hidden;
@@ -154,13 +154,13 @@ export default defineComponent({
     }
     .isHover{
       box-shadow:  8px 8px 8px  rgba(0,0,0,0.24);
-      //transform: translateY(-2%);
+      transform: scale(1.02)
     }
 
     .homeCardItemWrapBack{
       width: 100%;
       height: 300px;
-      box-shadow:  0 1px 25px  rgba(0,0,0,0.5);
+      box-shadow:  0 1px 25px  rgba(0,0,0,0.2);
       border-radius: 5px;
       overflow: hidden;
       display: flex;

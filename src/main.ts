@@ -7,7 +7,6 @@ import {setDomFontSize} from './tool/dom'
 import directive from "./directive/directive";
 
 
-
 setDomFontSize()
 
 createApp(App).use(router).use(directive).use(createPinia()).use(eventBus).mount('#app')

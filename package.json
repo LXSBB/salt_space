@@ -19,6 +19,7 @@
     "vue3-eventbus": "^2.0.0"
   },
   "devDependencies": {
+    "@types/node": "^18.0.6",
     "@vitejs/plugin-vue": "^2.3.0",
     "postcss-plugin-px2rem": "^0.8.1",
     "sass-loader": "^12.6.0",
