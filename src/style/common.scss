@@ -1,3 +1,5 @@
+@import "src/style/universal";
+
 /* 把我们所有标签的内外边距清零 */
 * {
   margin: 0;
@@ -32,9 +34,11 @@ a {
   color: #666;
   text-decoration: none
 }
-
+a.active{
+  color:$card-background-hover ;
+}
 a:hover {
-  color: #c81623
+  color: $card-background-hover
 }
 
 button,
@@ -73,4 +77,24 @@ input{
   background:none;
   outline:none;
   border:0;
+}
+
+/*定义滚动条高宽及背景
+ 高宽分别对应横竖滚动条的尺寸*/
+::-webkit-scrollbar {
+  width:10px;
+  height:10px;
+  background-color:transparent;
+}
+/*定义滚动条轨道
+ 内阴影+圆角*/
+::-webkit-scrollbar-track{
+  border-radius:6px;
+  background-color:transparent;
+}
+/*定义滑块
+ 内阴影+圆角*/
+::-webkit-scrollbar-thumb{
+  border-radius:8px;
+  background-color:$card-background-scrollbar;
 }

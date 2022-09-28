@@ -8,16 +8,19 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@kangc/v-md-editor": "^2.3.15",
     "async-validator": "^4.0.7",
     "autoprefixer": "^10.4.4",
     "axios": "^0.27.2",
     "echarts": "^5.3.3",
     "echarts-wordcloud": "^2.0.0",
     "element-plus": "^2.2.12",
+    "fs": "^0.0.1-security",
     "lodash": "^4.17.21",
     "pinia": "^2.0.13",
     "postcss-px2rem": "^0.3.0",
     "sass": "^1.49.11",
+    "svg-sprite-loader": "^6.0.11",
     "vue": "^3.2.25",
     "vue-router": "^4.0.14",
     "vue3-eventbus": "^2.0.0"

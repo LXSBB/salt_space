@@ -6,7 +6,7 @@
             <img src="../assets/image/icon.png" alt="">
             <div class="userNameSpan">
               <b>LXSSG</b>
-              <span>前端搬砖师</span>
+              <span>前端</span>
             </div>
           </div>
           <div class="userContent">
