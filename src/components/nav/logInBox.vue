@@ -54,6 +54,9 @@
       </div>
       <div class="loginWays" >
         <div class="loginSubmit" @click="loginEvent" v-showRipple="`rgba(113,164,183,0.3)`">
+          <el-icon class="is-loading loadingIcon" v-if="isLoading">
+            <Loading />
+          </el-icon>
           <span class="mobileWaysSpan">Log Ln</span>
         </div>
       </div>
@@ -106,11 +109,13 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, ref, nextTick, reactive} from 'vue';
+import {defineComponent, ref, nextTick, reactive, onMounted, onUnmounted} from 'vue';
 import bus from 'vue3-eventbus'
 import NavInput from "./navInput.vue";
 import MyForm from "../myComp/myForm.vue";
 import MyFormItem from "../myComp/myFormItem.vue";
+import {UserService} from "@/api/userService";
+import { ElNotification } from 'element-plus';
 
 export default defineComponent({
   components: {MyFormItem, MyForm, NavInput},
@@ -154,7 +159,7 @@ export default defineComponent({
       },
     }
     function closeLogInBox() {
-      bus.emit('closeLoginBox')
+      bus.emit('showLoginBox', false)
     }
     let isMobileWays = ref(false)
     //切换登录方式
@@ -214,9 +219,11 @@ export default defineComponent({
     const accountLoginForm:any = ref(null)
     const mobileLoginForm:any = ref(null)
     const signUpForm:any = ref(null)
+    let isLoading: any = ref(false)
     //登录
     function loginEvent() {
       promptState.value = false
+      isLoading.value = true
       if(isMobileWays.value) {
         mobileLoginForm.value.validate((res:boolean) => {
           console.log(res,'===w=4=2===')
@@ -224,11 +231,48 @@ export default defineComponent({
         //手机验证码登录
         console.log(phoneNum.value,verifyCode.value)
       }else {
+        if (!accountLoginForm.value) {
+          isLoading.value = false
+          return
+        }
         //账号密码登录
-        accountLoginForm.value.validate((res:boolean) => {
-          console.log(res,'===w=4=2===')
+        accountLoginForm.value.validate((val: boolean) => {
+          if (!val) {
+            isLoading.value = false
+            return
+          }
+          UserService.login({
+            username:account.value,
+            password:passWord.value
+          })
+            .then((res :any) => {
+              console.log(res)
+              let {data, code} = res
+              if (code === 1) {
+                bus.emit('showLoginBox', false)
+                bus.emit('isLogin', true)
+                ElNotification({
+                  offset: 70,
+                  title: 'Success',
+                  message: '登录成功',
+                  type: 'success',
+                })
+                localStorage.setItem('user_salt', data.token)
+                localStorage.setItem('user_info', JSON.stringify(data.user_Info))
+              } else {
+                ElNotification({
+                  offset: 70,
+                  title: 'Warning',
+                  message: res.data.message,
+                  type: 'warning',
+                })
+              }
+              isLoading.value = false
+            })
+            .catch((e) => {
+              isLoading.value = false
+            })
         })
-        console.log(account.value,passWord.value)
       }
     }
     //注册
@@ -259,6 +303,26 @@ export default defineComponent({
       promptState.value = false
       promptText.value = ''
     }
+
+    function keydown(e: any) {
+      if (e.code === 'Enter') {
+        if (isLoading.value) return
+        if (showLoginBox) {
+          loginEvent()
+        } else {
+          signUpEvent()
+        }
+      } else if (e.code === 'Escape') {
+        bus.emit('showLoginBox', false)
+      }
+    }
+    onMounted(() => {
+      window.addEventListener('keydown', keydown)
+    })
+
+    onUnmounted(() => {
+      window.removeEventListener('keydown', keydown)
+    })
     return {
       closeLogInBox,
       changeWays,
@@ -281,7 +345,8 @@ export default defineComponent({
       rules,
       accountLoginForm,
       mobileLoginForm,
-      signUpForm
+      signUpForm,
+      isLoading
     }
   }
 })
@@ -292,16 +357,16 @@ export default defineComponent({
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   background-color: rgba(0,0,0,.3);
   z-index: 1;
 }
 .loginContainer{
   position: fixed;
   z-index: 2;
-  top: 50%;
-  left: 50%;
+  top: 50vh;
+  left: 50vw;
   background-color: #f8f2f2;
   transform: translate(-50% ,-50%);
   width: 300px;
@@ -364,6 +429,10 @@ export default defineComponent({
       background-color: #4F35FDFF;
       color: rgb(189, 217, 252);
       overflow: hidden;
+      .loadingIcon{
+        position: absolute;
+        left: 75px;
+      }
       .mobileWaysSpan{
         font-size: 16px;
         user-select: none;

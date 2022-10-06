@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { showMessage } from "./status";   // 引入状态码文件
-import { ElMessage } from 'element-plus'  // 引入el 提示框，这个项目里用什么组件库这里引什么
+import {ElMessage, ElNotification} from 'element-plus'  // 引入el 提示框，这个项目里用什么组件库这里引什么
 
 // 设置接口超时时间
-axios.defaults.timeout = 60000;
+axios.defaults.timeout = 10000;
 
 // @ts-ignore
 axios.defaults.baseURL = '/api';
@@ -15,7 +15,7 @@ axios.interceptors.request.use(
         config.headers = {
             //'Content-Type':'application/x-www-form-urlencoded',   // 传参方式表单
             'Content-Type':'application/json;charset=UTF-8',        // 传参方式json
-            'token':''              // 这里自定义配置，这里传的是token
+            'token': localStorage.getItem('user_salt') || ''              // 这里自定义配置，这里传的是token
         };
         return config;
     },
@@ -29,16 +29,27 @@ axios.interceptors.response.use(
     response => {
         // if (response.data) response.data = eval('(' + response.data + ')')
         // console.log('werqw',JSON.parse(response.data) )
-        return response;
+        return response.data;
     },
     error => {
         const {response} = error;
         if (response) {
             // 请求已发出，但是不在2xx的范围
-            showMessage(response.status);           // 传入响应码，匹配响应码对应信息
+            ElNotification({
+                offset: 70,
+                title: 'Error',
+                message: showMessage(response.status),
+                type: 'error',
+            })
             return Promise.reject(response.data);
         } else {
-            ElMessage.warning('网络连接异常,请稍后再试!');
+            ElNotification({
+                offset: 70,
+                title: 'Warning',
+                message: '网络连接异常,请稍后再试!',
+                type: 'warning',
+            })
+            return Promise.reject('error');
         }
     }
 );

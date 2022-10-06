@@ -1,29 +1,6 @@
 <template>
   <div class="homeContainer">
       <div class="articleNavWrap">
-        <div class="userInfoWrap">
-          <div class="userName">
-            <img src="../assets/image/icon.png" alt="">
-            <div class="userNameSpan">
-              <b>LXSSG</b>
-              <span>前端</span>
-            </div>
-          </div>
-          <div class="userContent">
-            <div class="userinfoArea">
-              <span class="userinfoAreaNumber">100</span>
-              <span class="userinfoAreaType">文章</span>
-            </div>
-            <div class="userinfoArea">
-              <span class="userinfoAreaNumber">100</span>
-              <span class="userinfoAreaType">点赞</span>
-            </div>
-            <div class="userinfoArea">
-              <span class="userinfoAreaNumber">100</span>
-              <span class="userinfoAreaType">访问</span>
-            </div>
-          </div>
-        </div>
         <div class="articleTitleWrap">
           <div class="articleTitleNav">
             <img src="../assets/image/new.png" alt="">
@@ -48,7 +25,7 @@
         </div>
       </div>
       <div class="articleContent">
-        <workentry-card v-for="item in 10"></workentry-card>
+        <workentry-card v-for="item in articlesList" :info="item" :key="item.id"></workentry-card>
       </div>
       <div class="labelNavWrap">
         <div class="topicCanvasWrap">
@@ -59,7 +36,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, onMounted, ref} from 'vue';
+import {defineComponent, onMounted, onUnmounted, ref} from 'vue';
 import {useHomeStore} from "../store/home_store";
 import bus from 'vue3-eventbus'
 import HeaderBanner from "../components/headerBanner/headerBanner.vue";
@@ -67,7 +44,7 @@ import HomeFooter from "../components/homeComponent/homeFooter/homeFooter.vue";
 import HomeCards from "../components/homeComponent/homeCards/homeCards.vue";
 import TagCanvas from "@/components/homeComponent/tagCanvas.vue";
 import WorkentryCard from "@/components/homeComponent/workentryCard.vue";
-import {UserService} from "@/api/userService";
+import { HomeService } from '@/api/homeService';
 
 export default defineComponent({
   components: {WorkentryCard, TagCanvas, HomeCards, HomeFooter, HeaderBanner},
@@ -75,26 +52,54 @@ export default defineComponent({
     const homeStore:any = useHomeStore()
     const myNum = ref(1)
 
-    // function click() {
-    //   bus.emit('kkk',111)
-    //   // homeStore.$patch((state:any) => {
-    //   //   state.num++
-    //   //   myNum.value = state.num
-    //   // })
-    //
-    //   //homeStore.num++
-    //   // homeStore.countPlusOne(100)
-    // }
-    onMounted(() => {
-      UserService.login({username:"zdf",password:"12345678"})
-        .then(res => {
-          // console.log(JSON.parse(res.data))
-          console.log(res.data)
-        })
+    //文章列表
+    let articlesList: any = ref([])
+
+    //获取到的页数
+    let pageNum: any = ref(1)
+    //总页数
+    let total: any = ref('')
+
+    //获取文章列表
+    async function getArticleList () {
+      const data: any = await HomeService.getArticleList({
+        pageNum: pageNum.value,
+        pageSize: 8
+      })
+      if (data) {
+        articlesList.value = articlesList.value.concat(data.data.Articles)
+        pageNum.value = data.data.PageNo
+        total.value = data.data.Total
+      }
+    }
+
+    async function scrollGetList() {
+      //scrollTop是滚动条滚动时，距离顶部的距离
+      let scrollTop = document.documentElement.scrollTop||document.body.scrollTop;
+      //windowHeight是可视区的高度
+      let windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
+      //scrollHeight是滚动条的总高度
+      let scrollHeight = document.documentElement.scrollHeight||document.body.scrollHeight;
+      //滚动条到底部的条件
+      if(scrollTop + windowHeight == scrollHeight){
+        console.log()
+        if (articlesList.value.length < total.value) {
+          pageNum.value ++
+          await  getArticleList()
+        }
+      }
+    }
+    onMounted(async () => {
+      await getArticleList()
+      window.addEventListener('scroll', scrollGetList)
+    })
+    onUnmounted(() => {
+      window.removeEventListener('scroll', scrollGetList)
     })
     return {
       homeStore,
       myNum,
+      articlesList
       //click
     }
   }
@@ -115,7 +120,7 @@ export default defineComponent({
   .articleNavWrap{
     position: fixed;
     top: 100px;
-    max-height: 80vh;
+    //max-height: 80vh;
     left: 120px;
     width: 300px;
     display: flex;
@@ -151,52 +156,6 @@ export default defineComponent({
         align-items: center;
         padding-left: 25px;
         color: #666666;
-      }
-    }
-    .userInfoWrap{
-      @extend .articleTitleWrap;
-      height: 15vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      .userName{
-        width: 100%;
-        height: 45%;
-        display: flex;
-        justify-content: space-between;
-        padding: 10px 30px 0 30px;
-        img{
-          width: 50px;
-          height: 50px;
-          border: 1px solid black;
-          border-radius: 50%;
-        }
-        .userNameSpan{
-          display: flex;
-          width: 150px;
-          height: 50px;
-          justify-content: center;
-          flex-direction: column;
-          b{
-            font-size: 16px;
-          }
-        }
-      }
-      .userContent{
-        width: 100%;
-        height: 35%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0 40px 10px 40px;
-        .userinfoArea{
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          span{
-            font-size: 14px;
-          }
-        }
       }
     }
 

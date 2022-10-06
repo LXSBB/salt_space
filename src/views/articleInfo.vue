@@ -1,6 +1,7 @@
 <template>
   <div class="articleInfoContainer">
     <div class="articleContent">
+      <!--    左侧按钮    -->
       <div class="optionsArea">
         <div class="leftBarBut likesBut">
           <svg-icon name="good_info"></svg-icon>
@@ -14,8 +15,12 @@
       </div>
       <!--    文章内容    -->
       <div class="infoArea">
-        <v-md-preview ref="preview" :text="markdownTxt"></v-md-preview>
+        <div class="vMdWrap">
+          <v-md-preview ref="preview" :text="markdownTxt"></v-md-preview>
+        </div>
+        <article-comment></article-comment>
       </div>
+      <!--    右侧内容    -->
       <div class="funArea">
         <!--    作者信息    -->
         <div class="authorInfoCard">
@@ -67,6 +72,7 @@
 import {ref, computed, watchEffect, onMounted, onUnmounted} from 'vue';
 import markdownTxt from '@/mork/知识总结.md?raw';
 import _ from 'lodash'
+import ArticleComment from "@/components/infoComponent/articleComment.vue";
 
 //标题锚点集合
 let titles: any = ref([])
@@ -169,7 +175,7 @@ onUnmounted(() => {
       height: 50vh;
       position: fixed;
       z-index: 2;
-      left: 315px;
+      left: 290px;
       top: 180px;
       display: flex;
       flex-direction: column;
@@ -223,6 +229,10 @@ onUnmounted(() => {
       width: 820px;
       min-height: 100vh;
       border-radius: 5px;
+      .vMdWrap{
+        border-radius: 5px;
+        overflow: hidden;
+      }
     }
     .funArea{
       width: 300px;

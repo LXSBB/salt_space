@@ -5,3 +5,14 @@
     }
   }
 }
+
+.floatButton{
+  transition: all .3s;
+  &:hover{
+    box-shadow:  0 8px 20px rgb(93, 92, 93), 0 0 0  currentColor;
+    transform: translateY(-10%);
+  }
+  &:active{
+    filter: grayscale(30%)
+  }
+}
