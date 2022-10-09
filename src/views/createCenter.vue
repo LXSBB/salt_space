@@ -23,21 +23,108 @@
         <button class="create_menu_button create floatButton">
           <span>创建草稿</span>
         </button>
-        <div class="create_menu_button release floatButton">
-          <span>发布文章</span>
-        </div>
         <div class="create_menu_button back floatButton" @click="routerPush('/')">
           <span>回到主页</span>
         </div>
       </div>
     </div>
     <div class="create_md">
+      <div class="create_md_nav">
+        <input
+            class="create_md_nav_input"
+            v-model="targetName"
+            placeholder="请输入文章标题..."
+            type="text"
+        >
+        <div class="create_md_nav_ops">
+          <div class="create_menu_button release floatButton" @click="openReleaseDialog">
+            <span>发布</span>
+          </div>
+          <user-card :size="35"></user-card>
+        </div>
+      </div>
       <v-md-editor
           v-model="text"
           height="100%"
           :disabled-menus="[]"
       ></v-md-editor>
     </div>
+    <!--  发布文章弹出窗  -->
+    <el-dialog
+        v-model="releaseDialogVisible"
+        title="发布文章"
+        width="30%"
+        top="25vh"
+        custom-class="release_dialog"
+    >
+      <div class="releaseDialog_item">
+        <span class="releaseDialog_item_title">分类:</span>
+        <div class="releaseDialog_item_content">
+          <div :class="{'releaseDialog_tagBut': true,
+          'releaseDialog_tagBut_active': item.index === targetTag}"
+               v-for="item in tagList"
+               :key="item.index"
+               @click="clickTag(item.index)"
+          >
+            <span>{{item.btuName}}</span>
+          </div>
+        </div>
+      </div>
+      <div class="releaseDialog_item">
+        <span class="releaseDialog_item_title">文章封面:</span>
+        <div class="releaseDialog_item_content">
+          <upload-file v-if="!preImg" @afterUpload="afterUpload">
+            <svg-icon name="upload"></svg-icon>
+            <div class="el-upload__text">
+              将图片拖拽此处 或<em style="color: #a87ef1"> 点击</em>
+            </div>
+          </upload-file>
+          <div v-else class="preImgWrap">
+            <img class="preImg" :src="preImg" />
+          </div>
+        </div>
+      </div>
+      <div class="releaseDialog_item">
+        <span class="releaseDialog_item_title">收录至合集:</span>
+        <div class="releaseDialog_item_content">
+          <el-select v-model="targetCollection"
+                     multiple
+                     class="inputCollection"
+                     style="width: 300px"
+                     placeholder="最多收录至三个合集"
+          >
+            <el-option
+                v-for="item in collection"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+            />
+          </el-select>
+        </div>
+      </div>
+      <div class="releaseDialog_item">
+        <span class="releaseDialog_item_title">摘要:</span>
+        <div class="releaseDialog_item_content">
+          <el-input
+              v-model="targetSummary"
+              :rows="4"
+              type="textarea"
+              :maxlength="100"
+              show-word-limit
+          />
+        </div>
+      </div>
+      <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="releaseDialogVisible = false">取消</el-button>
+        <el-button type="primary"
+                   @click="releaseDialogVisible = false"
+        >
+          确认并发布
+        </el-button>
+      </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -45,16 +132,50 @@
 import { ref } from 'vue'
 import {
   Document,
+  UploadFilled,
   Menu as IconMenu,
   Location,
   Setting,
 } from '@element-plus/icons-vue'
 import {useRoute, useRouter} from "vue-router";
+import UserCard from "@/components/globals/userCard.vue";
+import TopicBut from "@/components/homeComponent/homeCards/topicBut.vue";
+import UploadFile from "@/components/createCenterComp/uploadFile.vue";
 
 const route: any = useRoute()
 const router = useRouter()
 const isCollapse = ref(true)
+//md内容
 const text = ref('')
+
+let tagList = [
+  {
+    index:1,
+    btuName:'前端'
+  },
+  {
+    index:2,
+    btuName:'后端'
+  },
+  {
+    index:3,
+    btuName:'测试'
+  },
+  {
+    index:4,
+    btuName:'AI'
+  },
+  {
+    index:5,
+    btuName:'阅读'
+  },
+  {
+    index:6,
+    btuName:'生活'
+  },
+]
+//当前文章的标题
+let targetName = ref('')
 const handleOpen = (key: string, keyPath: string[]) => {
   console.log(key, keyPath)
 }
@@ -69,9 +190,42 @@ function routerPush(name: string) {
   })
 }
 
-//图片上传
+//md图片上传
 function handleUploadImage(event: any, insertImage: any, files: any) {
 
+}
+
+//发布文章弹出窗状态
+let releaseDialogVisible = ref(false)
+
+//打开发布文章弹出窗
+function openReleaseDialog() {
+  targetTag.value = 0
+  preImg.value = ''
+  releaseDialogVisible.value = true
+}
+
+//当前发布文章的标签
+let targetTag = ref(0)
+
+//选择文章分类
+function clickTag(index: number) {
+  targetTag.value = index
+}
+
+//当前发布文章的合集
+let targetCollection = ref('')
+//用户的合集选项
+let collection = ref([])
+//发布文章的摘要
+let targetSummary = ref('')
+
+//预览图片
+let preImg = ref('')
+//上传图片后
+function afterUpload(data: any) {
+  console.log(data)
+  preImg.value = data.url
 }
 </script>
 
@@ -85,6 +239,7 @@ function handleUploadImage(event: any, insertImage: any, files: any) {
     height: 100%;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
     .create_menu_buttonWrap{
       height: 20%;
       width: 100%;
@@ -94,36 +249,63 @@ function handleUploadImage(event: any, insertImage: any, files: any) {
       justify-content: flex-end;
       border-right: 1px solid #dcdfe6;
       background-color: $background-color;
-      .create_menu_button{
-        width: 120px;
-        height: 30px;
-        border-radius: 15px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: white;
-        margin-bottom: 20px;
-        cursor: pointer;
-      }
-      .create{
-        background-color: #6666ff;
-      }
-      .release{
-        background-color: #1cc554;
-      }
-      .back{
-        background-color: #ff9966;
-      }
     }
   }
   .create_md{
     height: 100%;
     display: flex;
+    flex-direction: column;
     flex: 1;
+    .create_md_nav{
+      width: 100%;
+      height: 50px;
+      background-color: $background-color;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      .create_md_nav_input{
+        margin-left: 20px;
+        font-size: 18px;
+        color: #b8b8c0;
+        &::-webkit-input-placeholder{
+          color: #b8b8c0;
+        }
+      }
+      .create_md_nav_ops{
+        margin-right: 20px;
+        display: flex;
+        align-items: center;
+      }
+    }
+  }
+  .create_menu_button{
+    width: 120px;
+    height: 30px;
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    margin-bottom: 20px;
+    cursor: pointer;
+  }
+  .create{
+    background-color: #6666ff;
+  }
+  .release{
+    width: 70px;
+    height: 25px;
+    margin-bottom: 0;
+    margin-right: 20px;
+    background-color: #1cc554;
+  }
+  .back{
+    background-color: #ff9966;
   }
   .el-menu{
     height: 80%;
     background-color: $background-color;
+    border: none;
     .el-menu-item{
       color: #e7eaee;
       background-color: $background-color;
@@ -145,9 +327,86 @@ function handleUploadImage(event: any, insertImage: any, files: any) {
 }
 </style>
 
-<style>
+<style lang="scss">
+@import "src/style/universal";
 .el-menu-vertical-demo:not(.el-menu--collapse) {
   width: 200px;
   min-height: 400px;
+}
+.release_dialog{
+  .el-dialog__body{
+    padding-left: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    .releaseDialog_item{
+      display: flex;
+      .releaseDialog_item_title{
+        display: block;
+        width: 85px;
+        height: 100%;
+        text-align: right;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 32px;
+        color: #1d2129;
+      }
+      .releaseDialog_item_content{
+        margin-left: 10px;
+        width: 75%;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        .releaseDialog_tagBut{
+          padding: 0 .7rem;
+          font-size: 14px;
+          line-height: 28px;
+          width: 88px;
+          height: 28px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-align: center;
+          text-overflow: ellipsis;
+          border-radius: 2px;
+          cursor: pointer;
+          color: #86909c;
+          background-color: #f4f5f5;
+          transition: all .3s;
+          &:hover{
+            background-color: #e5e6eb
+          }
+        }
+        .releaseDialog_tagBut_active{
+          background-color: $card-background-color-b ;
+          color: $background-color;
+          &:hover{
+            background-color: $card-background-color-b ;
+            color: $background-color;
+          }
+        }
+        .upload-release{
+          width: 300px;
+        }
+        .svg-icon{
+          width: 50px;
+          height: 50px;
+          margin-bottom: 10px;
+        }
+        .inputCollection{
+          .el-input__inner::-webkit-input-placeholder{
+            font-size: 12px;
+          }
+        }
+        .preImgWrap{
+          width: 250px;
+          height: 150px;
+          .preImg{
+            width: 250px;
+            height: 150px;
+          }
+        }
+      }
+    }
+  }
 }
 </style>

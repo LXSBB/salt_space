@@ -1,3 +1,5 @@
+@import "src/style/universal";
+
 @keyframes rainbow {
   @for $i from 0 through 20 {
     #{percentage($i * 0.05)} {
@@ -14,5 +16,43 @@
   }
   &:active{
     filter: grayscale(30%)
+  }
+}
+
+.el-button{
+  &:active{
+    border-color: $card-background-hover;
+    color: $card-background-hover_b;
+    background-color: $card-background-color;
+  }
+  &:focus{
+    border-color: $card-background-hover;
+    color: $card-background-hover_b;
+    background-color: $card-background-color;
+  }
+  &:hover{
+    border-color: $card-background-hover;
+    color: $card-background-hover_b;
+    background-color: $card-background-color;
+  }
+}
+
+.el-button--primary{
+  background-color: $card-background-hover;
+  border-color:$card-background-hover;
+  &:active{
+    border-color: $card-background-hover_b;
+    background-color: $card-background-hover_b;
+    color: #ffffff;
+  }
+  &:focus{
+    border-color: $card-background-hover_b;
+    background-color: $card-background-hover_b;
+    color: #ffffff;
+  }
+  &:hover{
+    border-color: $card-background-hover;
+    background-color: $card-background-hover_b;
+    color: #ffffff;
   }
 }

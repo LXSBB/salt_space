@@ -5,6 +5,10 @@ import articleInfo from "@/views/articleInfo.vue";
 import createCenter from "@/views/createCenter.vue";
 import bus from 'vue3-eventbus'
 import personalCenter from "@/views/personalCenter.vue";
+//import { useUserStore } from "@/store/user_store";
+
+//const userStore = useUserStore()
+
 const routes = [
     {
         path: '/',
@@ -40,6 +44,8 @@ const router = createRouter({
 
 // 全局守卫：登录拦截 本地没有存token,请重新登录
 router.beforeEach((to, from, next) => {
+    //判断当前登录状态并修改
+    bus.emit('isLogin', !!localStorage.getItem('user_salt'))
     bus.emit('showNav', true)
     switch (to.name) {
         case "createCenter":

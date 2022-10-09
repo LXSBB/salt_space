@@ -55,6 +55,7 @@ const {info} = defineProps({
   height: 160px;
   cursor: pointer;
   display: flex;
+  overflow: hidden;
   .cardImg{
     width: 260px;
     height: 100%;

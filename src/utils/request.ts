@@ -55,19 +55,34 @@ axios.interceptors.response.use(
 );
 
 // 封装 GET POST 请求并导出
-export function request(url='',params={},type='POST'){
+export function request(url='',params={},type='POST',cb: any=null){
 //设置 url params type 的默认值
     return new Promise((resolve,reject)=>{
         let promise :any
-        if( type.toUpperCase()==='GET' ){
+        if( type.toUpperCase() ==='GET' ){
             promise = axios({
                 url,
                 params
             })
-        }else if( type.toUpperCase()=== 'POST' ){
+        } else if ( type.toUpperCase() === 'POST' ){
             promise = axios({
                 method:'POST',
                 url,
+                data:params
+            })
+        } else if ( type.toUpperCase() === 'upload' ) {
+            promise = axios({
+                method:'POST',
+                url,
+                timeout: 60000,
+                headers:{
+                    'Content-Type':'multipart/form-data;charset=UTF-8',
+                },
+                onUploadProgress: function (progressEvent) {
+                    //上传进度百分比
+                    let percentage = (progressEvent.loaded / progressEvent.total * 100 | 0)
+                    cb(percentage)
+                },
                 data:params
             })
         }

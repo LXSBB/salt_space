@@ -28,6 +28,15 @@
         <workentry-card v-for="item in articlesList" :info="item" :key="item.id"></workentry-card>
       </div>
       <div class="labelNavWrap">
+        <div class="labelNavWrap_search">
+          <el-input
+              v-model="searchVal"
+              class="w-50 m-2 labelNavWrap_search_input"
+              size="large"
+              placeholder="Please Search"
+              :suffix-icon="Search"
+          />
+        </div>
         <div class="topicCanvasWrap">
           <tag-canvas/>
         </div>
@@ -35,75 +44,68 @@
   </div>
 </template>
 
-<script lang="ts">
-import {defineComponent, onMounted, onUnmounted, ref} from 'vue';
+<script lang="ts" setup>
+import {onMounted, onUnmounted, ref} from 'vue';
 import {useHomeStore} from "../store/home_store";
 import bus from 'vue3-eventbus'
-import HeaderBanner from "../components/headerBanner/headerBanner.vue";
-import HomeFooter from "../components/homeComponent/homeFooter/homeFooter.vue";
-import HomeCards from "../components/homeComponent/homeCards/homeCards.vue";
 import TagCanvas from "@/components/homeComponent/tagCanvas.vue";
 import WorkentryCard from "@/components/homeComponent/workentryCard.vue";
 import { HomeService } from '@/api/homeService';
+import { Search } from '@element-plus/icons-vue'
+import { useUserStore } from "@/store/user_store";
 
-export default defineComponent({
-  components: {WorkentryCard, TagCanvas, HomeCards, HomeFooter, HeaderBanner},
-  setup() {
-    const homeStore:any = useHomeStore()
-    const myNum = ref(1)
+const userStore = useUserStore()
+const homeStore:any = useHomeStore()
+const myNum = ref(1)
 
-    //文章列表
-    let articlesList: any = ref([])
+//文章列表
+let articlesList: any = ref([])
 
-    //获取到的页数
-    let pageNum: any = ref(1)
-    //总页数
-    let total: any = ref('')
+//获取到的页数
+let pageNum: any = ref(1)
+//总页数
+let total: any = ref('')
 
-    //获取文章列表
-    async function getArticleList () {
-      const data: any = await HomeService.getArticleList({
-        pageNum: pageNum.value,
-        pageSize: 8
-      })
-      if (data) {
-        articlesList.value = articlesList.value.concat(data.data.Articles)
-        pageNum.value = data.data.PageNo
-        total.value = data.data.Total
-      }
-    }
+let searchVal:any = ref('')
 
-    async function scrollGetList() {
-      //scrollTop是滚动条滚动时，距离顶部的距离
-      let scrollTop = document.documentElement.scrollTop||document.body.scrollTop;
-      //windowHeight是可视区的高度
-      let windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
-      //scrollHeight是滚动条的总高度
-      let scrollHeight = document.documentElement.scrollHeight||document.body.scrollHeight;
-      //滚动条到底部的条件
-      if(scrollTop + windowHeight == scrollHeight){
-        console.log()
-        if (articlesList.value.length < total.value) {
-          pageNum.value ++
-          await  getArticleList()
-        }
-      }
-    }
-    onMounted(async () => {
-      await getArticleList()
-      window.addEventListener('scroll', scrollGetList)
-    })
-    onUnmounted(() => {
-      window.removeEventListener('scroll', scrollGetList)
-    })
-    return {
-      homeStore,
-      myNum,
-      articlesList
-      //click
+//获取文章列表
+async function getArticleList () {
+  const data: any = await HomeService.getArticleList({
+    pageNum: pageNum.value,
+    pageSize: 8
+  })
+  if (data) {
+    articlesList.value = articlesList.value.concat(data.data.Articles)
+    pageNum.value = data.data.PageNo
+    total.value = data.data.Total
+  }
+}
+
+async function scrollGetList() {
+  //scrollTop是滚动条滚动时，距离顶部的距离
+  let scrollTop = document.documentElement.scrollTop||document.body.scrollTop;
+  //windowHeight是可视区的高度
+  let windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
+  //scrollHeight是滚动条的总高度
+  let scrollHeight = document.documentElement.scrollHeight||document.body.scrollHeight;
+  //滚动条到底部的条件
+  if(scrollTop + windowHeight == scrollHeight){
+    console.log()
+    if (articlesList.value.length < total.value) {
+      pageNum.value ++
+      await  getArticleList()
     }
   }
+}
+onMounted(async () => {
+  await getArticleList()
+  window.addEventListener('scroll', scrollGetList)
+  console.log(userStore.login)
 })
+onUnmounted(() => {
+  window.removeEventListener('scroll', scrollGetList)
+})
+
 </script>
 
 <style scoped lang="scss">
@@ -156,6 +158,7 @@ export default defineComponent({
         align-items: center;
         padding-left: 25px;
         color: #666666;
+        font-size: 12px;
       }
     }
 
@@ -169,13 +172,27 @@ export default defineComponent({
     top: 100px;
     right: 120px;
     width: 300px;
+    .labelNavWrap_search{
+      margin-bottom: 20px;
+      .labelNavWrap_search_input{
+        :deep(.el-input__wrapper){
+          background-color: $card-background-color;
+          .el-input__inner{
+            color: $background-color;
+          }
+          &.is-focus{
+            box-shadow: none;
+          }
+        }
+      }
+    }
     .topicCanvasWrap{
       width: 100%;
       background-color: $card-background-color;
       border-radius: 5px;
       box-shadow: 1px 3px 12px 9px rgba(0,0,0,0.04);
       margin-bottom: 20px ;
-      height: 45vh;
+      height: 300px;
       display: flex;
       flex-direction: column;
     }
