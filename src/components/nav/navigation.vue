@@ -1,27 +1,33 @@
 <template>
-  <div v-show="navShow" :class="{'navContainer':true,'navContainerDown':!isTop}">
+  <div v-show="navShow" :class="{'navContainer':true}">
     <div class="iconWrap">
       <img class="navIcon" src="../../assets/image/icon.png" alt="">
-      <span :class="{'iconText':true,'iconTextTop':isTop}">Salt-Space</span>
+      <span :class="{'iconText':true}">Salt-Space</span>
     </div>
     <div class="contentWrap">
       <!--   首页   -->
       <div class="linkWrap" @click="routerPush('/')">
-        <span :class="{'inTopSpan':isTop}">主页</span>
+        <span>主页</span>
         <div class="hoverBox _center"></div>
-        <div :class="{'hoverBox':true,'hoverBoxTop':isTop}"></div>
+        <div :class="{'hoverBox':true}"></div>
       </div>
+      <el-switch
+          v-model="themeVal"
+          class="ml-2"
+          inline-prompt
+          active-icon="Moon"
+          inactive-icon="Sunny"
+          @change="themeChange"
+      />
       <!--   创作中心   -->
-      <div class="linkWrap" @click="routerPush('/createCenter')" >
-        <span :class="{'inTopSpan':isTop}">创作中心</span>
-        <div class="hoverBox _center"></div>
-        <div :class="{'hoverBox':true,'hoverBoxTop':isTop}"></div>
+      <div class="createCenterBut" @click="routerPush('/createCenter')" >
+        <span>创作中心</span>
       </div>
       <!--   登录   -->
       <div v-if="!isLogin" class="linkWrap" @click="clickShowLgoInBox">
-        <span :class="{'inTopSpan':isTop}">登录</span>
+        <span>登录</span>
         <div class="hoverBox _center"></div>
-        <div :class="{'hoverBox':true,'hoverBoxTop':isTop}"></div>
+        <div :class="{'hoverBox':true}"></div>
       </div>
       <!--   用户   -->
       <user-card v-else :size="35"></user-card>
@@ -37,7 +43,9 @@ import bus from 'vue3-eventbus'
 import LogInBox from "./logInBox.vue";
 import {useRoute, useRouter} from "vue-router";
 import {useUserStore} from "@/store/user_store";
+import {homeStore} from "@/store/home_store";
 import UserCard from "@/components/globals/userCard.vue";
+import { Moon, Sunny } from '@element-plus/icons-vue'
 
 export default defineComponent({
   components: {UserCard, LogInBox},
@@ -51,7 +59,8 @@ export default defineComponent({
     //是否是登陆状态
     let isLogin = ref(false)
     const userStore = useUserStore()
-
+    const useHomeStore = homeStore()
+    let themeVal = ref(false)
     //非登录按钮点击呼出
     onMounted(()=>{
       bus.on('showLoginBox',(payload: boolean)=>{
@@ -83,6 +92,10 @@ export default defineComponent({
         path: name,
       })
     }
+    function themeChange(e :any) {
+      useHomeStore.theme = e ? 'dark' : 'light'
+      document.documentElement.setAttribute('data-theme', e ? 'dark' : 'light');
+    }
     return {
       showLgoInBox,
       clickShowLgoInBox,
@@ -90,13 +103,14 @@ export default defineComponent({
       routerPush,
       navShow,
       isLogin,
+      themeVal,
+      themeChange
     }
   }
 })
 </script>
 
 <style scoped lang="scss">
-@import "src/style/universal";
 .navContainer{
   min-width: 1000px;
   width: 100%;
@@ -108,6 +122,8 @@ export default defineComponent({
   top: 0;
   z-index: 9999;
   transition: all .3s;
+  background-color: var(--background);
+  color: var(--font-color);
   .iconWrap{
     height: 40px;
     margin-left: 20px;
@@ -122,9 +138,6 @@ export default defineComponent({
       font-size: 16px;
       margin-left: 5px;
     }
-    .iconTextTop{
-      color: white;
-    }
   }
   .contentWrap{
     height: 40px;
@@ -132,6 +145,7 @@ export default defineComponent({
     align-items: center;
     justify-content: space-between;
     margin-right: 20px;
+    gap: 15px;
     .linkWrap{
       margin: 0 10px;
       cursor: pointer;
@@ -141,12 +155,9 @@ export default defineComponent({
       }
       .hoverBox{
         height: 0;
-        background-color: black;
+        background-color: var(--font-color);
         transition: height .2s;
         transform-origin: bottom;
-      }
-      .hoverBoxTop{
-        background-color: white;
       }
       ._center{
         background-color: rgba(255, 255, 255, 0);
@@ -157,15 +168,27 @@ export default defineComponent({
         height: 3px;
       }
     }
+    .createCenterBut{
+      font-size: 14px;
+      color: #fff;
+      padding: 7px 12px;
+      border-radius: 7px ;
+      background-color: var(--theme-color);
+      cursor: pointer;
+      transition: all .3s;
+      &:hover{
+        transform: translateY(-6%);
+        box-shadow:  0 5px 25px 4px rgba(0,0,0,0.2);
+      }
+    }
   }
 }
-.inTopSpan{
-  color: white;
-}
-.navContainerDown{
-  box-shadow: 0 14px 0 -13px rgba(70, 60, 66, 0.84);  //-webkit-backdrop-filter: blur(5px);
-  background-image: radial-gradient(transparent 1px,$background-color 1px);
-  background-size: 4px 4px;
-  backdrop-filter: blur(8px);
+:deep(.el-switch__core) {
+  width: 45px;
+  background: var(--switch-background) !important;
+  border-color: var(--switch-border-background) !important;
+  .el-switch__action{
+    background-color: var(--background);
+  }
 }
 </style>

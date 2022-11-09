@@ -1,26 +1,26 @@
 <template>
   <div class="homeContainer">
       <div class="articleNavWrap">
-        <div class="articleTitleWrap">
+        <div :class="{'articleTitleWrap': true, 'articleTitleWrapDark':themeComputed === 'dark'}">
           <div class="articleTitleNav">
-            <img src="../assets/image/new.png" alt="">
+            <svg-icon name="new" color="#eeac07"></svg-icon>
             <span>最新文章</span>
           </div>
           <div class="articleTitleTo"
                :style="{backgroundColor:index % 2 === 1 ? 'rgba(178, 176, 176, 0.1)' : ''}"
                v-for="(item,index) in 8">
-            <span>JavaScript高级程序设计随笔(一)</span>
+            <span class="articleTitleTo_span">JavaScript高级程序设计随笔(一)</span>
           </div>
         </div>
-        <div class="articleTitleWrap">
+        <div :class="{'articleTitleWrap': true, 'articleTitleWrapDark':themeComputed === 'dark'}">
           <div class="articleTitleNav">
-            <img src="../assets/image/hot.png" alt="">
+            <svg-icon name="hot" color="#e73e3e"></svg-icon>
             <span>最热文章</span>
           </div>
           <div class="articleTitleTo"
                :style="{backgroundColor:index % 2 === 1 ? 'rgba(178, 176, 176, 0.1)' : ''}"
                v-for="(item,index) in 8">
-            <span>JavaScript高级程序设计随笔(一)</span>
+            <span class="articleTitleTo_span">JavaScript高级程序设计随笔(一)</span>
           </div>
         </div>
       </div>
@@ -28,16 +28,7 @@
         <workentry-card v-for="item in articlesList" :info="item" :key="item.id"></workentry-card>
       </div>
       <div class="labelNavWrap">
-        <div class="labelNavWrap_search">
-          <el-input
-              v-model="searchVal"
-              class="w-50 m-2 labelNavWrap_search_input"
-              size="large"
-              placeholder="Please Search"
-              :suffix-icon="Search"
-          />
-        </div>
-        <div class="topicCanvasWrap">
+        <div :class="{'topicCanvasWrap': true, 'topicCanvasWrapDark':themeComputed === 'dark'}">
           <tag-canvas/>
         </div>
       </div>
@@ -45,8 +36,8 @@
 </template>
 
 <script lang="ts" setup>
-import {onMounted, onUnmounted, ref} from 'vue';
-import {useHomeStore} from "../store/home_store";
+import {computed, onMounted, onUnmounted, ref} from 'vue';
+import {homeStore} from "@/store/home_store";
 import bus from 'vue3-eventbus'
 import TagCanvas from "@/components/homeComponent/tagCanvas.vue";
 import WorkentryCard from "@/components/homeComponent/workentryCard.vue";
@@ -55,8 +46,12 @@ import { Search } from '@element-plus/icons-vue'
 import { useUserStore } from "@/store/user_store";
 
 const userStore = useUserStore()
-const homeStore:any = useHomeStore()
+const useHomeStore:any = homeStore()
 const myNum = ref(1)
+
+const themeComputed = computed(() => {
+  return useHomeStore.theme
+})
 
 //文章列表
 let articlesList: any = ref([])
@@ -100,7 +95,6 @@ async function scrollGetList() {
 onMounted(async () => {
   await getArticleList()
   window.addEventListener('scroll', scrollGetList)
-  console.log(userStore.login)
 })
 onUnmounted(() => {
   window.removeEventListener('scroll', scrollGetList)
@@ -115,7 +109,7 @@ onUnmounted(() => {
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  background-color: $background-color;
+  background-color: var(--background-home);
   padding-top: 100px;
   padding-left: 40px;
   padding-right: 40px;
@@ -130,25 +124,23 @@ onUnmounted(() => {
     .articleTitleWrap{
       width: 100%;
       height: 30vh;
-      background-color: $card-background-color;
       border-radius: 5px;
-      box-shadow: 1px 3px 12px 9px rgba(0,0,0,0.04);
+      box-shadow:
+          4px 4px 6px var(--shadow-left),
+          -4px -4px 6px var(--shadow-right);
       margin-bottom: 20px ;
       overflow: hidden;
       display: flex;
       flex-direction: column;
+      background-color: var(--background);
       .articleTitleNav{
         height: 12%;
         width: 100%;
-        background-color: $card-background-color-b;
+        color: var(--font-color-bold);
+        background-color: rgba(178, 176, 176, 0.1);
         display: flex;
         align-items: center;
         padding-left: 20px;
-        img{
-          width: 20px;
-          height: 20px;
-          margin-right: 10px;
-        }
       }
       .articleTitleTo{
         width: 100%;
@@ -157,11 +149,24 @@ onUnmounted(() => {
         display: flex;
         align-items: center;
         padding-left: 25px;
-        color: #666666;
         font-size: 12px;
+        cursor: pointer;
+        .articleTitleTo_span{
+          color: var(--font-color);
+          transition:all .3s;
+          &:hover{
+            transform: scale(1.1);
+            color: var(--theme-color);
+          }
+        }
+        &:nth-last-child(1){
+          border: none;
+        }
       }
     }
-
+    .articleTitleWrapDark{
+      box-shadow: none;
+    }
   }
   .articleContent{
     width: 1000px;
@@ -172,30 +177,25 @@ onUnmounted(() => {
     top: 100px;
     right: 120px;
     width: 300px;
-    .labelNavWrap_search{
-      margin-bottom: 20px;
-      .labelNavWrap_search_input{
-        :deep(.el-input__wrapper){
-          background-color: $card-background-color;
-          .el-input__inner{
-            color: $background-color;
-          }
-          &.is-focus{
-            box-shadow: none;
-          }
-        }
-      }
-    }
+    background-color: var(--background) ;
     .topicCanvasWrap{
       width: 100%;
-      background-color: $card-background-color;
       border-radius: 5px;
-      box-shadow: 1px 3px 12px 9px rgba(0,0,0,0.04);
-      margin-bottom: 20px ;
+      box-shadow:
+          4px 4px 6px var(--shadow-left),
+          -4px -4px 6px var(--shadow-right);
       height: 300px;
       display: flex;
       flex-direction: column;
     }
+    .topicCanvasWrapDark{
+      box-shadow: none;
+    }
+  }
+  .svg-icon{
+    width: 20px;
+    height: 20px;
+    margin-right: 6px;
   }
 }
 </style>

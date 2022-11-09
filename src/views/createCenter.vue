@@ -44,8 +44,9 @@
         </div>
       </div>
       <v-md-editor
+          class="md_editor"
+          :height="editorHeight"
           v-model="text"
-          height="100%"
           :disabled-menus="[]"
       ></v-md-editor>
     </div>
@@ -73,14 +74,21 @@
       <div class="releaseDialog_item">
         <span class="releaseDialog_item_title">文章封面:</span>
         <div class="releaseDialog_item_content">
-          <upload-file v-if="!preImg" @afterUpload="afterUpload">
-            <svg-icon name="upload"></svg-icon>
-            <div class="el-upload__text">
-              将图片拖拽此处 或<em style="color: #a87ef1"> 点击</em>
-            </div>
-          </upload-file>
-          <div v-else class="preImgWrap">
+          <upload-file ref="uploadFile" v-show="!preImg" @afterUpload="afterUpload"/>
+          <div
+              v-show="preImg"
+              class="preImgWrap"
+              @mouseenter="preImgEnter"
+              @mouseleave="preImgLeave"
+          >
             <img class="preImg" :src="preImg" />
+            <transition name="fade">
+              <div v-if="showPreImgOps" class="preImg_ops">
+                <el-icon :size="30" @click="delImg">
+                  <Delete />
+                </el-icon>
+              </div>
+            </transition>
           </div>
         </div>
       </div>
@@ -118,7 +126,7 @@
       <span class="dialog-footer">
         <el-button @click="releaseDialogVisible = false">取消</el-button>
         <el-button type="primary"
-                   @click="releaseDialogVisible = false"
+                   @click="releaseArticle"
         >
           确认并发布
         </el-button>
@@ -129,18 +137,18 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import {nextTick, onMounted, ref} from 'vue'
 import {
   Document,
-  UploadFilled,
-  Menu as IconMenu,
-  Location,
-  Setting,
+  Delete
 } from '@element-plus/icons-vue'
 import {useRoute, useRouter} from "vue-router";
 import UserCard from "@/components/globals/userCard.vue";
 import TopicBut from "@/components/homeComponent/homeCards/topicBut.vue";
 import UploadFile from "@/components/createCenterComp/uploadFile.vue";
+import {CreateService} from "@/api/createService";
+import {ElNotification} from "element-plus/es";
+import ProgressBar from "@/tool/canvas/progressBar";
 
 const route: any = useRoute()
 const router = useRouter()
@@ -227,6 +235,52 @@ function afterUpload(data: any) {
   console.log(data)
   preImg.value = data.url
 }
+
+//删除图片
+function delImg() {
+  preImg.value = ''
+}
+
+//显示图片编辑栏
+let showPreImgOps = ref(false)
+/*
+* 鼠标进入图片事件
+* */
+function preImgEnter() {
+  showPreImgOps.value = true
+}
+function preImgLeave() {
+  showPreImgOps.value = false
+}
+
+/*
+* 发布文章
+* */
+async function releaseArticle() {
+  let params = {
+    title: targetName.value,
+    content: text.value,
+  }
+  const data: any = await CreateService.createArticle(params)
+  if (data.code === 1) {
+    ElNotification({
+      offset: 70,
+      title: 'Warning',
+      message: '发布成功',
+      type: 'warning',
+    })
+    releaseDialogVisible.value = false
+  }
+}
+
+let editorHeight = ref('')
+
+onMounted(() => {
+  console.log(  window.innerHeight)
+  nextTick(() => {
+    editorHeight.value = `${window.innerHeight - 50}px`
+  })
+})
 </script>
 
 <style scoped lang="scss">
@@ -247,7 +301,7 @@ function afterUpload(data: any) {
       flex-direction: column;
       align-items: center;
       justify-content: flex-end;
-      border-right: 1px solid #dcdfe6;
+      border-right: 1px solid $background-color;
       background-color: $background-color;
     }
   }
@@ -387,11 +441,6 @@ function afterUpload(data: any) {
         .upload-release{
           width: 300px;
         }
-        .svg-icon{
-          width: 50px;
-          height: 50px;
-          margin-bottom: 10px;
-        }
         .inputCollection{
           .el-input__inner::-webkit-input-placeholder{
             font-size: 12px;
@@ -400,13 +449,36 @@ function afterUpload(data: any) {
         .preImgWrap{
           width: 250px;
           height: 150px;
+          position: relative;
           .preImg{
             width: 250px;
             height: 150px;
+          }
+          .preImg_ops{
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
           }
         }
       }
     }
   }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

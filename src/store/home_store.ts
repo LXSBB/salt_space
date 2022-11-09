@@ -1,8 +1,9 @@
 import { defineStore } from 'pinia'
 import Type from '../types/types'
-export const useHomeStore = defineStore('home', {
+export const homeStore = defineStore('home', {
     state: () => ({
-        nowTopic:1
+        nowTopic:1,
+        theme: 'light'
     }),
     getters: {
         // countPow2(state) {

@@ -16,7 +16,7 @@
       <!--    文章内容    -->
       <div class="infoArea">
         <div class="vMdWrap">
-          <v-md-preview ref="preview" :text="markdownTxt"></v-md-preview>
+          <v-md-preview ref="preview" :text="text"></v-md-preview>
         </div>
         <article-comment></article-comment>
       </div>
@@ -73,7 +73,10 @@ import {ref, computed, watchEffect, onMounted, onUnmounted} from 'vue';
 import markdownTxt from '@/mork/知识总结.md?raw';
 import _ from 'lodash'
 import ArticleComment from "@/components/infoComponent/articleComment.vue";
+import { useRoute } from 'vue-router'
+import {ArticleInfoService} from "@/api/articleInfoService";
 
+const route = useRoute()
 //标题锚点集合
 let titles: any = ref([])
 //当前锚点index
@@ -81,6 +84,7 @@ let tagIndex: any = ref(0)
 const preview: any = ref();
 const navWrap: any = ref();
 
+let text: any = ref('')
 /*
 * 点击右侧标题导航
 * */
@@ -146,7 +150,19 @@ const renderNav = () => {
   tagIndex.value = titles.value[0]['lineIndex']
 }
 
-onMounted(() => {
+/*
+* 获取文章
+* */
+async function getArticle() {
+  const id = + (route.query.articleId as string)
+  let data: any = await ArticleInfoService.articlePreview({articleId: id})
+  if (data.code === 0) {
+    text.value = data.data.content
+  }
+}
+
+onMounted(async () => {
+  await getArticle()
   renderNav()
   addEventListener('scroll', watchScroll)
 })
@@ -314,7 +330,7 @@ onUnmounted(() => {
         background-color: $card-background-color;
         border-radius: 5px;
         position: sticky;
-        top: 70px;
+        top: 80px;
         .navWrapListItem{
           display: flex;
           align-items: center;

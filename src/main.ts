@@ -8,6 +8,8 @@ import directive from "./directive/directive";
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import svgIcon from './components/globals/svgIcon.vue'
+import './style/theme.css'
+
 // 预览组件以及样式
 import VMdPreview from '@kangc/v-md-editor/lib/preview';
 import '@kangc/v-md-editor/lib/style/preview.css';

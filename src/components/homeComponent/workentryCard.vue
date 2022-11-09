@@ -1,5 +1,8 @@
 <template>
-  <div class="articleCardContainer" @click="toInfo">
+  <div
+    :class="{'articleCardContainer': true, 'articleCardContainerDark': themeComputed === 'dark'}"
+    @click="toInfo"
+  >
     <img src="src/assets/image/mountains.jpg" class="cardImg">
     <div class="contentTitle">
       <h1 class="titleWrap">{{info.title}}</h1>
@@ -11,10 +14,6 @@
           <span class="workTime">{{info.createTime}}</span>
         </div>
         <div class="infoNumber">
-          <div class="iconWrap">
-            <img src="../../assets/image/browse.png" alt="">
-            <span>100</span>
-          </div>
           <div class="iconWrap">
             <svg-icon name="good_info" color="6666ff"></svg-icon>
             <span>100</span>
@@ -31,12 +30,22 @@
 </template>
 
 <script setup>
-import {defineProps} from 'vue'
+import {defineProps, computed} from 'vue'
 import { useRouter } from 'vue-router';
+import {homeStore} from "@/store/home_store";
 const router = useRouter();
+const useHomeStore = homeStore();
+
+const themeComputed = computed(() => {
+  return useHomeStore.theme
+})
+
 
 function toInfo() {
-  router.push("/info");
+  router.push({
+    path: '/info',
+    query: {articleId: info.id}
+  });
 }
 
 const {info} = defineProps({
@@ -48,14 +57,15 @@ const {info} = defineProps({
 @import "src/style/universal";
 .articleCardContainer{
   width: 100%;
-  background-color: $card-background-color;
+  background-color: var(--background);
   border-radius: 5px;
-  box-shadow: 1px 3px 12px 9px rgba(0,0,0,0.04);
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.05), 2px 2px 3px 1px rgba(208, 213, 219, 0.28);
   margin-bottom: 20px ;
   height: 160px;
   cursor: pointer;
   display: flex;
   overflow: hidden;
+  transition: all .3s;
   .cardImg{
     width: 260px;
     height: 100%;
@@ -69,14 +79,14 @@ const {info} = defineProps({
     .titleWrap{
       font-size: 20px;
       font-weight: bold;
-      color: black;
+      color: var(--font-color-bold);
       margin-bottom: 8px;
     }
     .Introduction{
       height: 50px;
       font-size: 16px;
       font-weight: normal;
-      color: #6e6c6c;
+      color: var(--font-color);
       margin-bottom: 20px;
       text-overflow: -o-ellipsis-lastline;
       overflow: hidden;
@@ -89,19 +99,21 @@ const {info} = defineProps({
       display: flex;
       align-items: center;
       justify-content: space-between;
+      color: var(--font-color);
       .tagSpan{
         padding-left: 10px;
         padding-right: 10px;
         margin-left: 10px;
         margin-right: 10px;
-        border-left: 1px solid #b0afaf;
-        border-right: 1px solid #b0afaf;
+        border-left: 1px solid var(--font-color);
+        border-right: 1px solid var(--font-color);
       }
       .infoNumber{
         display: flex;
         .iconWrap{
           display: flex;
           align-items: center;
+          color: var(--font-color);
           img{
             width: 15px;
             height: 15px;
@@ -114,6 +126,12 @@ const {info} = defineProps({
       }
     }
   }
+  &:hover {
+    box-shadow: 0 0 0 3px var(--theme-color);
+  }
+}
+.articleCardContainerDark{
+  box-shadow: none;
 }
 .svg-icon{
   width: 15px;

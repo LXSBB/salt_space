@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import {defineComponent, toRefs, ref, onMounted, watch,computed} from 'vue';
-import {useHomeStore} from "@/store/home_store";
+import {homeStore} from "@/store/home_store";
 
 export default defineComponent({
   props:{
@@ -15,14 +15,14 @@ export default defineComponent({
   setup(props,{emit}) {
     let {prop} = toRefs(props)
     let isActive = ref(false)
-    const homeStore:any = useHomeStore()
+    const useHomeStore:any = homeStore()
 
     function handleClick() {
-      homeStore.changeTopic((props.prop as any).type)
+      useHomeStore.changeTopic((props.prop as any).type)
       emit('clickBtn',(props.prop as any).type)
     }
     let topicType = computed(() => {
-      return homeStore.nowTopic
+      return useHomeStore.nowTopic
     })
 
 

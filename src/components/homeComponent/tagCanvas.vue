@@ -1,6 +1,5 @@
 <template>
-  <div id="tagContainer">
-  </div>
+  <div id="tagContainer"/>
 </template>
 
 <script lang="ts">
@@ -43,28 +42,20 @@ export default defineComponent({
         chart = echarts.init(dom)
         chart.on('click', clickTag)
         chart.setOption({
-          title: {
-            text: '',
-            top: '5%',
-            left: '3%',
-            textStyle: {
-              fontSize: 16,
-              color: '#5353b2',
-              fontWeight: 'normal'
-            }
-          },
           series: [
             {
               type: 'wordCloud',
-              shape: 'cardioid',
-              left: '0%',                 // X轴偏移量
-              top: '-15%',                  // Y轴偏移量
+              shape: 'circle',
+              left: 'center',                 // X轴偏移量
+              top: 'center',
+              right: null,
+              bottom: null,// Y轴偏移量
               width: '100%',               // canvas宽度大小
               height: '100%',              // canvas高度大小
               sizeRange: [12, 50],         //  词典字体大小范围配置
               rotationRange: [-90, 90],
               rotationStep: 45,             // 词典字体旋转角度配置，默认不旋转
-              gridSize: 15,                // 词典字体间距配置
+              gridSize: 8,                // 词典字体间距配置
               layoutAnimation: true,       // 为false词典过度会阻塞
               drawOutOfBound: false,      //允许绘制大于画布大小的单词
               textStyle: {                 // 词典样式配置
