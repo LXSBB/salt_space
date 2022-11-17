@@ -24,10 +24,50 @@
           </div>
         </div>
       </div>
-      <div class="articleContent">
-        <workentry-card v-for="item in articlesList" :info="item" :key="item.id"></workentry-card>
+    <!-- list  -->
+    <div class="articleContent">
+      <workentry-card v-for="item in articlesList" :info="item" :key="item.id"></workentry-card>
+      <div v-if="showSkeleton" class="listSkeleton">
+        <el-skeleton  :rows="2" animated />
       </div>
+      <div class="noDataImg" v-if="noData">
+        <svg-icon name="noData"></svg-icon>
+        <span>- 暂无数据 -</span>
+      </div>
+    </div>
+    <!-- 右侧分类   -->
       <div class="labelNavWrap">
+        <div
+            class="labelClassifyWrap"
+            :style="labelClassifyStyle"
+            @click="changeLabelClassify"
+        >
+          <div
+              :class="{'labelClassifyBut': true ,'labelClassifyButActive': tagIndex === 0}"
+              labelTag="综合"
+          >
+            综合
+          </div>
+          <div
+              :class="{'labelClassifyBut': true ,'labelClassifyButActive': tagIndex === 1}"
+              labelTag="前端"
+          >
+            前端
+          </div>
+          <div
+              :class="{'labelClassifyBut': true ,'labelClassifyButActive': tagIndex === 2}"
+              labelTag="后端"
+          >
+            后端
+          </div>
+          <div
+              :class="{'labelClassifyBut': true ,'labelClassifyButActive': tagIndex === 3}"
+              labelTag="代码人生"
+          >
+            代码人生
+          </div>
+        </div>
+        <!--  云图  -->
         <div :class="{'topicCanvasWrap': true, 'topicCanvasWrapDark':themeComputed === 'dark'}">
           <tag-canvas/>
         </div>
@@ -36,7 +76,7 @@
 </template>
 
 <script lang="ts" setup>
-import {computed, onMounted, onUnmounted, ref} from 'vue';
+import {computed, nextTick, onMounted, onUnmounted, reactive, ref} from 'vue';
 import {homeStore} from "@/store/home_store";
 import bus from 'vue3-eventbus'
 import TagCanvas from "@/components/homeComponent/tagCanvas.vue";
@@ -63,16 +103,79 @@ let total: any = ref('')
 
 let searchVal:any = ref('')
 
+let tagIndex = ref(0)
+//切换分类
+function changeLabelClassify(e: any) {
+  const tag = e.target.getAttribute('labelTag')
+  if (!tag) return
+  switch (tag) {
+    case '综合':
+      tagIndex.value = 0
+      break
+    case '前端':
+      tagIndex.value = 1
+      break
+    case '后端':
+      tagIndex.value = 2
+      break
+    case '代码人生':
+      tagIndex.value = 3
+      break
+  }
+  labelClassifySlider()
+}
+
+
+const labelClassifyStyle: any = reactive({
+  '--label-width': 0,
+  '--label-height': 0,
+  '--label-left': 0,
+  '--label-top': 0,
+})
+
+//分类滑块移动
+function labelClassifySlider() {
+  nextTick(() => {
+    const labelClassifyWrap: any = document.querySelector('.labelClassifyWrap')
+    const labelClassifyBut: any = labelClassifyWrap.querySelectorAll('.labelClassifyBut')
+    const {offsetHeight,offsetWidth,offsetLeft,offsetTop} = labelClassifyBut[tagIndex.value]
+    labelClassifyWrap.setAttribute('data-width', offsetWidth)
+    labelClassifyWrap.setAttribute('data-height', offsetHeight)
+    labelClassifyStyle['--label-width'] = offsetWidth + 'px'
+    labelClassifyStyle['--label-height'] = offsetHeight + 'px'
+    labelClassifyStyle['--label-left'] = offsetLeft + 'px'
+    labelClassifyStyle['--label-top'] = offsetTop + 'px'
+  })
+}
+
+//开屏显示骨架屏
+let showSkeleton = ref(false)
+//显示无数据提示
+let noData = ref(false)
 //获取文章列表
 async function getArticleList () {
-  const data: any = await HomeService.getArticleList({
-    pageNum: pageNum.value,
-    pageSize: 8
-  })
-  if (data) {
-    articlesList.value = articlesList.value.concat(data.data.Articles)
-    pageNum.value = data.data.PageNo
-    total.value = data.data.Total
+  if (articlesList.value.length === 0) {
+    showSkeleton.value = true
+  }
+  try {
+    const data: any = await HomeService.getArticleList({
+      pageNum: pageNum.value,
+      pageSize: 8
+    })
+    showSkeleton.value = false
+    if (data) {
+      articlesList.value = articlesList.value.concat(data.data.Articles)
+      if (articlesList.value.length === 0) {
+        noData.value = true
+      }
+      pageNum.value = data.data.PageNo
+      total.value = data.data.Total
+    } else {
+      noData.value = true
+    }
+  } catch (e) {
+    showSkeleton.value = false
+    noData.value = true
   }
 }
 
@@ -84,8 +187,7 @@ async function scrollGetList() {
   //scrollHeight是滚动条的总高度
   let scrollHeight = document.documentElement.scrollHeight||document.body.scrollHeight;
   //滚动条到底部的条件
-  if(scrollTop + windowHeight == scrollHeight){
-    console.log()
+  if(Math.ceil(scrollTop) + Math.ceil(windowHeight) === scrollHeight){
     if (articlesList.value.length < total.value) {
       pageNum.value ++
       await  getArticleList()
@@ -93,8 +195,9 @@ async function scrollGetList() {
   }
 }
 onMounted(async () => {
-  await getArticleList()
+  labelClassifySlider()
   window.addEventListener('scroll', scrollGetList)
+  await getArticleList()
 })
 onUnmounted(() => {
   window.removeEventListener('scroll', scrollGetList)
@@ -125,9 +228,11 @@ onUnmounted(() => {
       width: 100%;
       height: 30vh;
       border-radius: 5px;
-      box-shadow:
-          4px 4px 6px var(--shadow-left),
-          -4px -4px 6px var(--shadow-right);
+      border: 1px solid rgba(179, 179, 197, 0.5);
+      //box-shadow:
+      //    4px 4px 6px var(--shadow-left),
+      //    -4px -4px 6px var(--shadow-right);
+      box-shadow: 0 9px 0 -5px var(--theme-color), 0 15px 0 -7px var(--theme-color-1);
       margin-bottom: 20px ;
       overflow: hidden;
       display: flex;
@@ -141,6 +246,11 @@ onUnmounted(() => {
         display: flex;
         align-items: center;
         padding-left: 20px;
+        .svg-icon{
+          width: 20px;
+          height: 20px;
+          margin-right: 6px;
+        }
       }
       .articleTitleTo{
         width: 100%;
@@ -155,7 +265,6 @@ onUnmounted(() => {
           color: var(--font-color);
           transition:all .3s;
           &:hover{
-            transform: scale(1.1);
             color: var(--theme-color);
           }
         }
@@ -171,19 +280,45 @@ onUnmounted(() => {
   .articleContent{
     width: 1000px;
     margin: 0 40px;
+    position: relative;
+    .listSkeleton{
+      width: 100%;
+      height: 160px;
+      border-radius: 5px;
+      box-shadow: 0 4px 8px 6px rgba(7,17,27,.06);
+      padding: 20px;
+      background-color: var(--background);
+    }
+    .noDataImg{
+      position: absolute;
+      top: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      .svg-icon{
+        width: 100px;
+        height: 100px;
+      }
+      span{
+        margin-top: 10px;
+        font-size: 16px;
+        color: var(--font-color);
+      }
+    }
   }
   .labelNavWrap{
     position: fixed;
     top: 100px;
     right: 120px;
     width: 300px;
-    background-color: var(--background) ;
+    background-color: var(--background-home) ;
     .topicCanvasWrap{
       width: 100%;
-      border-radius: 5px;
-      box-shadow:
-          4px 4px 6px var(--shadow-left),
-          -4px -4px 6px var(--shadow-right);
+      border-radius: 10px;
+      background-color: #e8edf1; // 背景色
+      box-shadow: -10px -10px 15px #f5f9fd, 10px 10px 15px #d8dbe5;
       height: 300px;
       display: flex;
       flex-direction: column;
@@ -191,11 +326,65 @@ onUnmounted(() => {
     .topicCanvasWrapDark{
       box-shadow: none;
     }
-  }
-  .svg-icon{
-    width: 20px;
-    height: 20px;
-    margin-right: 6px;
+    .labelClassifyWrap{
+      margin-bottom: 30px;
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 12px; // 圆角
+      overflow: hidden; // 超出隐藏
+      background-color: #e8edf1; // 背景色
+      box-shadow: -10px -10px 15px #f5f9fd, 10px 10px 15px #d8dbe5;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      position: relative;
+      .labelClassifyBut{
+        font-size: 14px;
+        padding: 0 25px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 50px;
+        border-radius: 12px;
+        text-align: center;
+        color: var(--font-color);
+        cursor: pointer;
+        transition: all .5s;
+      }
+      .labelClassifyButActive{
+        transform: scale(1);
+        color: var(--theme-color);
+        animation: txtOutScale .5s;
+      }
+      @keyframes txtOutScale {
+        0% {
+          color: var(--font-color);
+          transform: scale(1);
+        }
+        80% {
+          color: var(--theme-color);
+          transform: scale(1.1);
+        }
+        100% {
+          color: var(--theme-color);
+          transform: scale(1);
+        }
+      }
+    }
+    .labelClassifyWrap::after{
+      transition: all .5s;
+      content: "";
+      border-radius: 12px;
+      position: absolute;
+      width: var(--label-width);
+      height: var(--label-height);
+      left: var(--label-left);
+      top: var(--label-top);
+      box-shadow: inset 8px 8px 6px #d9dce6,
+      inset -5px -5px 15px #f5f9fd,
+      inset -5px -5px 15px #f5f9fd,
+      inset 7px 7px 6px #d9dce6;
+    }
   }
 }
 </style>

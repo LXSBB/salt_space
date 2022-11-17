@@ -124,6 +124,7 @@ export default defineComponent({
   transition: all .3s;
   background-color: var(--background);
   color: var(--font-color);
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 5%);
   .iconWrap{
     height: 40px;
     margin-left: 20px;
@@ -184,7 +185,7 @@ export default defineComponent({
   }
 }
 :deep(.el-switch__core) {
-  width: 45px;
+  width: 40px;
   background: var(--switch-background) !important;
   border-color: var(--switch-border-background) !important;
   .el-switch__action{

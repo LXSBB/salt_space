@@ -59,7 +59,7 @@ const {info} = defineProps({
   width: 100%;
   background-color: var(--background);
   border-radius: 5px;
-  box-shadow: 0 0 0 1px rgba(0,0,0,0.05), 2px 2px 3px 1px rgba(208, 213, 219, 0.28);
+  box-shadow: 0 4px 8px 6px rgba(7,17,27,.06);
   margin-bottom: 20px ;
   height: 160px;
   cursor: pointer;

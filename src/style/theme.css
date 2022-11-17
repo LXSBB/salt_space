@@ -1,14 +1,15 @@
 :root {
     --background: #fff;
-    --background-home: #f4f5f5;
+    --background-home: #edf1f4;
     --font-color: #515767;
     --font-color-bold: black;
     --theme-color: #0b73f3;
+    --theme-color-1: rgba(11, 115, 243, 0.59);
     --switch-background: #eeac07;
     --switch-but-background: #fff;
     --switch-border-background: #ef8804;
     --shadow-left: rgba(0, 0, 0, .1);
-    --shadow-right: rgba(255, 255, 255, .8);
+    --shadow-right: rgba(241, 245, 245, 0.99);
 }
 
 [data-theme="dark"] {
@@ -23,13 +24,14 @@
 }
 [data-theme="light"] {
     --background: #fff;
-    --background-home: #f4f5f5;
+    --background-home: #edf1f4;
     --font-color: #515767;
     --font-color-bold: black;
     --theme-color: #0b73f3;
+    --theme-color-1: rgba(11, 115, 243, 0.59);
     --switch-background: #eeac07;
     --switch-but-background: #fff;
     --switch-border-background: #ef8804;
     --shadow-left: rgba(0, 0, 0, .1);
-    --shadow-right: rgba(255, 255, 255, .8);
+    --shadow-right: rgba(241, 245, 245, 0.99);
 }
