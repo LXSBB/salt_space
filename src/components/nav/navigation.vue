@@ -7,7 +7,7 @@
     <div class="contentWrap">
       <!--   首页   -->
       <div class="linkWrap" @click="routerPush('/')">
-        <span>主页</span>
+        <span>blog</span>
         <div class="hoverBox _center"></div>
         <div :class="{'hoverBox':true}"></div>
       </div>
@@ -19,19 +19,19 @@
           inactive-icon="Sunny"
           @change="themeChange"
       />
+      <el-input v-model="searchVal" placeholder="Please input" />
       <!--   创作中心   -->
       <div class="createCenterBut" @click="routerPush('/createCenter')" >
         <span>创作中心</span>
       </div>
+    </div>
+    <div class="nav_right_bar">
       <!--   登录   -->
-      <div v-if="!isLogin" class="linkWrap" @click="clickShowLgoInBox">
+      <div v-if="!isLogin" class="createCenterBut" @click="clickShowLgoInBox">
         <span>登录</span>
-        <div class="hoverBox _center"></div>
-        <div :class="{'hoverBox':true}"></div>
       </div>
       <!--   用户   -->
-      <user-card v-else :size="35"></user-card>
-      <!--      <div v-else class="linkWrap">-->
+      <user-card v-else ></user-card>
     </div>
     <log-in-box v-if="showLgoInBox"></log-in-box>
   </div>
@@ -80,6 +80,10 @@ export default defineComponent({
       })
       //是否有token
       isLogin.value = !!localStorage.getItem('user_salt')
+      //初始化主题
+      const theme = localStorage.getItem('theme')
+      themeVal.value = theme === 'dark'
+      document.documentElement.setAttribute('data-theme', theme || 'light');
     })
     let showLgoInBox = ref(false)
     //打开登录弹窗
@@ -92,9 +96,16 @@ export default defineComponent({
         path: name,
       })
     }
+    //切换主题
     function themeChange(e :any) {
       useHomeStore.theme = e ? 'dark' : 'light'
-      document.documentElement.setAttribute('data-theme', e ? 'dark' : 'light');
+      localStorage.setItem('theme', useHomeStore.theme)
+      document.documentElement.setAttribute('data-theme', useHomeStore.theme);
+    }
+    let searchVal = ref('')
+    //搜索
+    function search() {
+
     }
     return {
       showLgoInBox,
@@ -104,7 +115,8 @@ export default defineComponent({
       navShow,
       isLogin,
       themeVal,
-      themeChange
+      themeChange,
+      searchVal
     }
   }
 })
@@ -116,18 +128,18 @@ export default defineComponent({
   width: 100%;
   height: 70px;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   position: fixed;
   top: 0;
-  z-index: 9999;
+  z-index: 999;
   transition: all .3s;
   background-color: var(--background);
   color: var(--font-color);
   box-shadow: 0 1px 2px 0 rgb(0 0 0 / 5%);
   .iconWrap{
     height: 40px;
-    margin-left: 20px;
+    margin-right: 20px;
     display: flex;
     align-items: center;
     .navIcon{
@@ -169,19 +181,32 @@ export default defineComponent({
         height: 3px;
       }
     }
-    .createCenterBut{
-      font-size: 14px;
-      color: #fff;
-      padding: 7px 12px;
-      border-radius: 7px ;
-      background-color: var(--theme-color);
-      cursor: pointer;
-      transition: all .3s;
-      &:hover{
-        transform: translateY(-6%);
-        box-shadow:  0 5px 25px 4px rgba(0,0,0,0.2);
-      }
-    }
+  }
+  .nav_right_bar{
+    height: 40px;
+    position: absolute;
+    right: 20px;
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+.createCenterBut{
+  //width: 140px;
+  font-size: 14px;
+  color: #fff;
+  padding: 7px 12px;
+  border-radius: 7px ;
+  text-align: center;
+  background-color: var(--theme-color);
+  cursor: pointer;
+  transition: all .3s;
+  span{
+    display: inline-block;
+    white-space: nowrap;
+  }
+  &:hover{
+    transform: translateY(-6%);
+    box-shadow:  0 5px 25px 4px rgba(0,0,0,0.2);
   }
 }
 :deep(.el-switch__core) {

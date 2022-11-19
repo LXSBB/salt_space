@@ -1,19 +1,11 @@
-:root {
-    --background: #fff;
-    --background-home: #edf1f4;
-    --font-color: #515767;
-    --font-color-bold: black;
-    --theme-color: #0b73f3;
-    --theme-color-1: rgba(11, 115, 243, 0.59);
-    --switch-background: #eeac07;
-    --switch-but-background: #fff;
-    --switch-border-background: #ef8804;
-    --shadow-left: rgba(0, 0, 0, .1);
-    --shadow-right: rgba(241, 245, 245, 0.99);
-}
-
 [data-theme="dark"] {
     --background: #232222;
+    --background-home-label: #313131;
+    --shadow-home-label-1: rgba(0,0,0,0);
+    --shadow-home-label-2: rgba(0,0,0,0);
+    --home-label-active: rgba(50, 95, 128, 0.4);
+    --Skeleton-1: #303030;
+    --Skeleton-2: #424243;
     --font-color: rgba(255,255,255,0.6);;
     --font-color-bold: rgba(255,255,255,0.87);
     --theme-color: #0b73f3;
@@ -24,7 +16,14 @@
 }
 [data-theme="light"] {
     --background: #fff;
+    --background_hover: #e3e5e7;
     --background-home: #edf1f4;
+    --background-home-label: #e8edf1;
+    --shadow-home-label-1: #f5f9fd;
+    --shadow-home-label-2: #d8dbe5;
+    --home-label-active: none;
+    --Skeleton-1: #f0f2f5;
+    --Skeleton-2: #e6e8eb;
     --font-color: #515767;
     --font-color-bold: black;
     --theme-color: #0b73f3;

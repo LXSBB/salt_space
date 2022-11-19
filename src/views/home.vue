@@ -194,13 +194,21 @@ async function scrollGetList() {
     }
   }
 }
+
+function homeResize() {
+  labelClassifySlider()
+}
+
 onMounted(async () => {
   labelClassifySlider()
   window.addEventListener('scroll', scrollGetList)
+  window.addEventListener('resize', homeResize)
   await getArticleList()
 })
+
 onUnmounted(() => {
   window.removeEventListener('scroll', scrollGetList)
+  window.removeEventListener('resize', homeResize)
 })
 
 </script>
@@ -281,13 +289,18 @@ onUnmounted(() => {
     width: 1000px;
     margin: 0 40px;
     position: relative;
-    .listSkeleton{
+    :deep(.listSkeleton){
       width: 100%;
       height: 160px;
       border-radius: 5px;
       box-shadow: 0 4px 8px 6px rgba(7,17,27,.06);
       padding: 20px;
       background-color: var(--background);
+      .el-skeleton__item{
+        background: linear-gradient(90deg,var(--Skeleton-1) 25%,
+            var(--Skeleton-2) 37%,var(--Skeleton-1) 63%);
+        background-size: 400% 100%;
+      }
     }
     .noDataImg{
       position: absolute;
@@ -317,8 +330,8 @@ onUnmounted(() => {
     .topicCanvasWrap{
       width: 100%;
       border-radius: 10px;
-      background-color: #e8edf1; // 背景色
-      box-shadow: -10px -10px 15px #f5f9fd, 10px 10px 15px #d8dbe5;
+      background-color: var(--background-home-label);
+      box-shadow: -10px -10px 15px var(--shadow-home-label-1), 10px 10px 15px var(--shadow-home-label-2);
       height: 300px;
       display: flex;
       flex-direction: column;
@@ -332,8 +345,8 @@ onUnmounted(() => {
       padding: 12px 16px;
       border-radius: 12px; // 圆角
       overflow: hidden; // 超出隐藏
-      background-color: #e8edf1; // 背景色
-      box-shadow: -10px -10px 15px #f5f9fd, 10px 10px 15px #d8dbe5;
+      background-color: var(--background-home-label);
+      box-shadow: -10px -10px 15px var(--shadow-home-label-1), 10px 10px 15px var(--shadow-home-label-2);
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
@@ -359,15 +372,12 @@ onUnmounted(() => {
       @keyframes txtOutScale {
         0% {
           color: var(--font-color);
-          transform: scale(1);
         }
         80% {
           color: var(--theme-color);
-          transform: scale(1.1);
         }
         100% {
           color: var(--theme-color);
-          transform: scale(1);
         }
       }
     }
@@ -380,10 +390,11 @@ onUnmounted(() => {
       height: var(--label-height);
       left: var(--label-left);
       top: var(--label-top);
-      box-shadow: inset 8px 8px 6px #d9dce6,
-      inset -5px -5px 15px #f5f9fd,
-      inset -5px -5px 15px #f5f9fd,
-      inset 7px 7px 6px #d9dce6;
+      background-color: var(--home-label-active);
+      box-shadow: inset 8px 8px 6px var(--shadow-home-label-2),
+      inset -5px -5px 15px var(--shadow-home-label-1),
+      inset -5px -5px 15px var(--shadow-home-label-1),
+      inset 7px 7px 6px var(--shadow-home-label-2);
     }
   }
 }
