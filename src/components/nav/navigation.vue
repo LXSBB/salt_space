@@ -27,7 +27,7 @@
     </div>
     <div class="nav_right_bar">
       <!--   登录   -->
-      <div v-if="!isLogin" class="createCenterBut" @click="clickShowLgoInBox">
+      <div v-if="!isLogin" class="loginBut" @click="clickShowLgoInBox">
         <span>登录</span>
       </div>
       <!--   用户   -->
@@ -188,6 +188,28 @@ export default defineComponent({
     right: 20px;
     display: flex;
     justify-content: flex-end;
+    .loginBut{
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 35px;
+      font-size: 14px;
+      color: #fff;
+      padding: 7px 12px;
+      border-radius: 7px ;
+      text-align: center;
+      background-color: var(--login-but);
+      cursor: pointer;
+      transition: all .3s;
+      span{
+        display: inline-block;
+        white-space: nowrap;
+      }
+      &:hover{
+        transform: translateY(-60%);
+        box-shadow:  0 8px 24px rgba(0,0,0,0.2);
+      }
+    }
   }
 }
 .createCenterBut{

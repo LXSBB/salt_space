@@ -49,22 +49,11 @@
             综合
           </div>
           <div
-              :class="{'labelClassifyBut': true ,'labelClassifyButActive': tagIndex === 1}"
-              labelTag="前端"
+              v-for="(item, index) in categoriesList"
+              :class="{'labelClassifyBut': true ,'labelClassifyButActive': tagIndex === index + 1}"
+              :labelTag="item.name"
           >
-            前端
-          </div>
-          <div
-              :class="{'labelClassifyBut': true ,'labelClassifyButActive': tagIndex === 2}"
-              labelTag="后端"
-          >
-            后端
-          </div>
-          <div
-              :class="{'labelClassifyBut': true ,'labelClassifyButActive': tagIndex === 3}"
-              labelTag="代码人生"
-          >
-            代码人生
+            {{item.name}}
           </div>
         </div>
         <!--  云图  -->
@@ -104,24 +93,21 @@ let total: any = ref('')
 let searchVal:any = ref('')
 
 let tagIndex = ref(0)
+
 //切换分类
 function changeLabelClassify(e: any) {
   const tag = e.target.getAttribute('labelTag')
   if (!tag) return
-  switch (tag) {
-    case '综合':
-      tagIndex.value = 0
-      break
-    case '前端':
-      tagIndex.value = 1
-      break
-    case '后端':
-      tagIndex.value = 2
-      break
-    case '代码人生':
-      tagIndex.value = 3
-      break
+  if (tag === '综合') {
+    tagIndex.value = 0
+  } else {
+    categoriesList.value.forEach((item: any, index) => {
+      if (tag === item.name) {
+        tagIndex.value = index + 1
+      }
+    })
   }
+  //调整滑块位置
   labelClassifySlider()
 }
 
@@ -179,6 +165,14 @@ async function getArticleList () {
   }
 }
 
+const categoriesList = ref([])
+async function getLabelList() {
+  const {data}: any = await HomeService.getLabelList()
+  if (data) {
+    categoriesList.value = data.categories
+  }
+}
+
 async function scrollGetList() {
   //scrollTop是滚动条滚动时，距离顶部的距离
   let scrollTop = document.documentElement.scrollTop||document.body.scrollTop;
@@ -200,10 +194,11 @@ function homeResize() {
 }
 
 onMounted(async () => {
+  await getLabelList()
+  await getArticleList()
   labelClassifySlider()
   window.addEventListener('scroll', scrollGetList)
   window.addEventListener('resize', homeResize)
-  await getArticleList()
 })
 
 onUnmounted(() => {
@@ -363,6 +358,7 @@ onUnmounted(() => {
         color: var(--font-color);
         cursor: pointer;
         transition: all .5s;
+        user-select: none;
       }
       .labelClassifyButActive{
         transform: scale(1);
