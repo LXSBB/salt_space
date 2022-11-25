@@ -3,7 +3,7 @@
     :class="{'articleCardContainer': true, 'articleCardContainerDark': themeComputed === 'dark'}"
     @click="toInfo"
   >
-    <img src="src/assets/image/mountains.jpg" class="cardImg">
+    <img src="/src/assets/image/mountains.jpg" class="cardImg">
     <div class="contentTitle">
       <h1 class="titleWrap">{{info.title}}</h1>
       <p class="Introduction">{{info.content}}</p>

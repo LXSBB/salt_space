@@ -11,14 +11,15 @@
         <div class="hoverBox _center"></div>
         <div :class="{'hoverBox':true}"></div>
       </div>
-      <el-switch
-          v-model="themeVal"
-          class="ml-2"
-          inline-prompt
-          active-icon="Moon"
-          inactive-icon="Sunny"
-          @change="themeChange"
-      />
+<!--      <el-switch-->
+<!--          v-model="themeVal"-->
+<!--          class="ml-2"-->
+<!--          inline-prompt-->
+<!--          active-icon="Moon"-->
+<!--          inactive-icon="Sunny"-->
+<!--          @change="themeChange"-->
+<!--      />-->
+      <theme-switch></theme-switch>
       <el-input v-model="searchVal" placeholder="Please input" />
       <!--   创作中心   -->
       <div class="createCenterBut" @click="routerPush('/createCenter')" >
@@ -46,9 +47,10 @@ import {useUserStore} from "@/store/user_store";
 import {homeStore} from "@/store/home_store";
 import UserCard from "@/components/globals/userCard.vue";
 import { Moon, Sunny } from '@element-plus/icons-vue'
+import ThemeSwitch from "@/components/nav/themeSwitch.vue";
 
 export default defineComponent({
-  components: {UserCard, LogInBox},
+  components: {ThemeSwitch, UserCard, LogInBox},
   setup() {
     const route: any = useRoute()
     const router = useRouter()
@@ -80,10 +82,6 @@ export default defineComponent({
       })
       //是否有token
       isLogin.value = !!localStorage.getItem('user_salt')
-      //初始化主题
-      const theme = localStorage.getItem('theme')
-      themeVal.value = theme === 'dark'
-      document.documentElement.setAttribute('data-theme', theme || 'light');
     })
     let showLgoInBox = ref(false)
     //打开登录弹窗
@@ -96,12 +94,7 @@ export default defineComponent({
         path: name,
       })
     }
-    //切换主题
-    function themeChange(e :any) {
-      useHomeStore.theme = e ? 'dark' : 'light'
-      localStorage.setItem('theme', useHomeStore.theme)
-      document.documentElement.setAttribute('data-theme', useHomeStore.theme);
-    }
+
     let searchVal = ref('')
     //搜索
     function search() {
@@ -115,7 +108,6 @@ export default defineComponent({
       navShow,
       isLogin,
       themeVal,
-      themeChange,
       searchVal
     }
   }

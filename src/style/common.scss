@@ -35,10 +35,10 @@ a {
   text-decoration: none
 }
 a.active{
-  color:$card-background-hover ;
+  color: var(--theme-color);
 }
 a:hover {
-  color: $card-background-hover
+  color: var(--theme-color);
 }
 
 button,
@@ -100,5 +100,5 @@ input{
  内阴影+圆角*/
 ::-webkit-scrollbar-thumb{
   border-radius:8px;
-  background-color:$card-background-scrollbar;
+  background-color:var(--theme-color-1);
 }

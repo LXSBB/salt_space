@@ -1,6 +1,6 @@
 <template>
   <div class="homeContainer">
-      <div class="articleNavWrap">
+      <div class="articleNavWrap home_card_left" v-show="!hiddenLabel">
         <div :class="{'articleTitleWrap': true, 'articleTitleWrapDark':themeComputed === 'dark'}">
           <div class="articleTitleNav">
             <svg-icon name="new" color="#eeac07"></svg-icon>
@@ -36,7 +36,7 @@
       </div>
     </div>
     <!-- 右侧分类   -->
-      <div class="labelNavWrap">
+      <div class="labelNavWrap" v-if="!hiddenLabel">
         <div
             class="labelClassifyWrap"
             :style="labelClassifyStyle"
@@ -136,13 +136,14 @@ function labelClassifySlider() {
 
 //开屏显示骨架屏
 let showSkeleton = ref(false)
+
+//隐藏边栏
+let hiddenLabel = ref(true)
+
 //显示无数据提示
 let noData = ref(false)
 //获取文章列表
 async function getArticleList () {
-  if (articlesList.value.length === 0) {
-    showSkeleton.value = true
-  }
   try {
     const data: any = await HomeService.getArticleList({
       pageNum: pageNum.value,
@@ -150,6 +151,7 @@ async function getArticleList () {
     })
     showSkeleton.value = false
     if (data) {
+      hiddenLabel.value = false
       articlesList.value = articlesList.value.concat(data.data.Articles)
       if (articlesList.value.length === 0) {
         noData.value = true
@@ -157,22 +159,32 @@ async function getArticleList () {
       pageNum.value = data.data.PageNo
       total.value = data.data.Total
     } else {
-      noData.value = true
+      errShow()
     }
   } catch (e) {
-    showSkeleton.value = false
-    noData.value = true
+    errShow()
   }
 }
 
+//获取标签
 const categoriesList = ref([])
 async function getLabelList() {
-  const {data}: any = await HomeService.getLabelList()
-  if (data) {
-    categoriesList.value = data.categories
+  try {
+    const {data}: any = await HomeService.getLabelList()
+    if (data) {
+      categoriesList.value = data.categories
+    }
+  } catch (e) {
+    errShow()
   }
 }
 
+function errShow() {
+  showSkeleton.value = false
+  noData.value = true
+}
+
+//滚动获取文章
 async function scrollGetList() {
   //scrollTop是滚动条滚动时，距离顶部的距离
   let scrollTop = document.documentElement.scrollTop||document.body.scrollTop;
@@ -189,16 +201,23 @@ async function scrollGetList() {
   }
 }
 
+//窗口变化
 function homeResize() {
-  labelClassifySlider()
+  if (window.innerWidth < 1200) {
+    hiddenLabel.value = true
+  } else if (window.innerWidth >= 1200 && categoriesList.value.length > 0) {
+    hiddenLabel.value = false
+  }
+  if (!hiddenLabel.value) labelClassifySlider()
 }
 
 onMounted(async () => {
-  await getLabelList()
-  await getArticleList()
-  labelClassifySlider()
   window.addEventListener('scroll', scrollGetList)
   window.addEventListener('resize', homeResize)
+  showSkeleton.value = true
+  await getLabelList()
+  await getArticleList()
+  if (!hiddenLabel.value) labelClassifySlider()
 })
 
 onUnmounted(() => {
@@ -212,7 +231,7 @@ onUnmounted(() => {
 @import "src/style/universal";
 .homeContainer{
   width: 100%;
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   justify-content: center;
   background-color: var(--background-home);
@@ -249,6 +268,7 @@ onUnmounted(() => {
         display: flex;
         align-items: center;
         padding-left: 20px;
+        font-size: 14px;
         .svg-icon{
           width: 20px;
           height: 20px;
@@ -262,9 +282,13 @@ onUnmounted(() => {
         display: flex;
         align-items: center;
         padding-left: 25px;
-        font-size: 12px;
+        padding-right: 25px;
         cursor: pointer;
         .articleTitleTo_span{
+          font-size: 12px;
+          overflow: hidden;
+          text-overflow:ellipsis;
+          white-space:nowrap;
           color: var(--font-color);
           transition:all .3s;
           &:hover{

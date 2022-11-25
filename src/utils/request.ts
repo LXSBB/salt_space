@@ -3,7 +3,7 @@ import { showMessage } from "./status";   // 引入状态码文件
 import {ElMessage, ElNotification} from 'element-plus'  // 引入el 提示框，这个项目里用什么组件库这里引什么
 
 // 设置接口超时时间
-axios.defaults.timeout = 10000;
+axios.defaults.timeout = 5000;
 
 // @ts-ignore
 axios.defaults.baseURL = '/api';

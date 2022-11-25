@@ -2,7 +2,7 @@
   <div class="create">
     <div class="create_menu">
       <el-menu
-          :default-openeds="['1']"
+          :default-openeds="['1','1-2']"
           class="el-menu-vertical-demo"
           :collapse="false"
           @upload-image="handleUploadImage"
@@ -12,11 +12,20 @@
         <el-sub-menu index="1">
           <template #title>
             <el-icon><document /></el-icon>
-            <span>草稿箱</span>
+            <span>我的文章</span>
           </template>
-          <el-menu-item index="1-1">文章1</el-menu-item>
-          <el-menu-item index="1-2">文章2</el-menu-item>
-          <el-menu-item index="1-3">文章3</el-menu-item>
+          <el-sub-menu index="1-1">
+            <template #title>已发布文章</template>
+            <el-menu-item index="1-1-1">item one</el-menu-item>
+            <el-menu-item index="1-1-2">item one</el-menu-item>
+            <el-menu-item index="1-1-3">item one</el-menu-item>
+          </el-sub-menu>
+          <el-sub-menu index="1-2">
+            <template #title>草稿箱</template>
+            <el-menu-item index="1-2-1">item one</el-menu-item>
+            <el-menu-item index="1-2-2">item one</el-menu-item>
+            <el-menu-item index="1-2-3">item one</el-menu-item>
+          </el-sub-menu>
         </el-sub-menu>
       </el-menu>
       <div class="create_menu_buttonWrap">
@@ -40,7 +49,6 @@
           <div class="create_menu_button release floatButton" @click="openReleaseDialog">
             <span>发布</span>
           </div>
-          <user-card :size="35"></user-card>
         </div>
       </div>
       <v-md-editor
@@ -224,7 +232,7 @@ function clickTag(index: number) {
 //当前发布文章的合集
 let targetCollection = ref('')
 //用户的合集选项
-let collection = ref([])
+let collection: any = ref([])
 //发布文章的摘要
 let targetSummary = ref('')
 
@@ -287,7 +295,6 @@ onMounted(() => {
 @import "src/style/universal";
 .create{
   display: flex;
-  background-color: $background-color;
   height: 100vh;
   .create_menu{
     height: 100%;
@@ -301,8 +308,8 @@ onMounted(() => {
       flex-direction: column;
       align-items: center;
       justify-content: flex-end;
-      border-right: 1px solid $background-color;
-      background-color: $background-color;
+      //border-right: 1px solid var(--background);
+      background-color: var(--theme-color-2);
     }
   }
   .create_md{
@@ -313,7 +320,7 @@ onMounted(() => {
     .create_md_nav{
       width: 100%;
       height: 50px;
-      background-color: $background-color;
+      background-color: var(--theme-color-2);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -358,18 +365,22 @@ onMounted(() => {
   }
   .el-menu{
     height: 80%;
-    background-color: $background-color;
+    background-color: var(--theme-color-2);
     border: none;
+    .el-sub-menu{
+      color: #fff;
+      background-color: var(--theme-color-2);
+    }
     .el-menu-item{
-      color: #e7eaee;
-      background-color: $background-color;
+      color: #fff;
+      background-color: var(--theme-color-2);
       &:hover{
-        background-color: $card-background-color-b;
-        color: $background-color;
+        background-color: var(--theme-color-1);
+        color: var(--theme-color);
       }
     }
     .is-active{
-      color: #66ff99;
+      color: var(--switch-border-background);
     }
   }
   :deep(.el-sub-menu__title) {

@@ -18,7 +18,7 @@
         <div class="vMdWrap">
           <v-md-preview ref="preview" :text="text"></v-md-preview>
         </div>
-        <article-comment></article-comment>
+<!--        <article-comment></article-comment>-->
       </div>
       <!--    右侧内容    -->
       <div class="funArea">
@@ -35,14 +35,14 @@
           <div class="articleInfo">
             <div class="articleInfoNum">
               <div class="imgWrap">
-                <img src="../assets/image/good_info.png" alt="">
+                <svg-icon name="collect"></svg-icon>
               </div>
               <span>获得点赞</span>
               <span>100</span>
             </div>
             <div class="articleInfoNum">
               <div class="imgWrap">
-                <img src="../assets/image/read_info.png" alt="">
+                <svg-icon name="watch"></svg-icon>
               </div>
               <span>文章被阅读</span>
               <span>100</span>
@@ -177,7 +177,7 @@ onUnmounted(() => {
   width: 100%;
   display: flex;
   justify-content: center;
-  background-color: $background-color;
+  background-color: var(--background-home);
   padding-top: 100px;
   padding-left: 40px;
   padding-right: 40px;
@@ -199,7 +199,8 @@ onUnmounted(() => {
         border-radius: 50%;
         width: 100%;
         height: 50px;
-        background-color: $card-background-color;
+        background-color: var(--background);
+        box-shadow: 0 3px 12px  var(--shadow-home-label-2);
         margin-bottom: 30px;
         cursor: pointer;
         display: flex;
@@ -226,17 +227,17 @@ onUnmounted(() => {
           font-size: 11px;
           text-align: center;
           white-space: nowrap;
-          background-color: rgba(184, 162, 246, .8);
+          background-color: var(--theme-color);
           color: #fff
         }
         .svg-icon{
-          color: $card-background-hover;
+          color: var(--theme-color);
           transition: all .3s;
         }
       }
       .leftBarBut:hover{
         .svg-icon{
-          color: $background-color;
+          color: var(--theme-color-1);
         }
       }
     }
@@ -257,12 +258,14 @@ onUnmounted(() => {
       .authorInfoCard{
         width: 100%;
         height: 180px;
-        background-color: $card-background-color;
+        background-color: var(--background);
+        box-shadow: 0 3px 12px  var(--shadow-home-label-2);
         display: flex;
         flex-direction: column;
         align-items: center;
         border-radius: 5px;
         margin-bottom: 20px;
+        color:var(--font-color);
         .authorInfo{
           width: 100%;
           height: 90px;
@@ -289,7 +292,7 @@ onUnmounted(() => {
         }
         .line{
           width: 80%;
-          border-bottom: 1px solid $background-color;
+          border-bottom: 1px solid var(--theme-color);
         }
         .articleInfo{
           margin-top: 10px;
@@ -301,14 +304,13 @@ onUnmounted(() => {
             width: 25px;
             height: 25px;
             border-radius: 50%;
-            background-color: $card-background-color-b;
+            background-color: var(--theme-color-1);
             margin-right: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            img{
-              width: 15px;
-              height: 15px;
+            .svg-icon{
+              color: var(--theme-color);
             }
           }
           .articleInfoNum{
@@ -327,10 +329,12 @@ onUnmounted(() => {
         min-height: 300px;
         max-height: 50vh;
         overflow-y: scroll;
-        background-color: $card-background-color;
+        background-color: var(--background);
+        box-shadow: 0 3px 12px  var(--shadow-home-label-2);
         border-radius: 5px;
         position: sticky;
         top: 80px;
+        padding-top: 10px;
         .navWrapListItem{
           display: flex;
           align-items: center;
@@ -340,7 +344,7 @@ onUnmounted(() => {
             border-radius: 0 4px 4px 0;
             background-color: transparent;
             &.active{
-              background-color: $card-background-hover;
+              background-color: var(--theme-color);
             }
           }
           .tag{
@@ -355,5 +359,9 @@ onUnmounted(() => {
       }
     }
   }
+}
+:deep(.vuepress-markdown-body) {
+  background-color: var(--background);
+  color: var(--font-color);
 }
 </style>

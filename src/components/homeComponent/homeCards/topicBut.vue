@@ -10,10 +10,10 @@ import {homeStore} from "@/store/home_store";
 
 export default defineComponent({
   props:{
-    prop:Object
+    prop:Objectvite build
   },
   setup(props,{emit}) {
-    let {prop} = toRefs(props)
+    let {prop}: any = toRefs(props)
     let isActive = ref(false)
     const useHomeStore:any = homeStore()
 

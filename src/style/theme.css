@@ -9,6 +9,7 @@
     --font-color: rgba(255,255,255,0.6);;
     --font-color-bold: rgba(255,255,255,0.87);
     --theme-color: #0b73f3;
+    --theme-color-1: rgba(11, 115, 243, 0.59);
     --login-but: #63b956;
     --background-home: #1a1a1a;
     --switch-background : #0d1823;
@@ -29,7 +30,8 @@
     --font-color-bold: black;
     --login-but: #63b956;
     --theme-color: #0b73f3;
-    --theme-color-1: rgba(11, 115, 243, 0.59);
+    --theme-color-1: rgba(11, 115, 243, 0.4);
+    --theme-color-2: rgb(42, 114, 204);
     --switch-background: #eeac07;
     --switch-but-background: #fff;
     --switch-border-background: #ef8804;
