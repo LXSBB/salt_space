@@ -1,35 +1,26 @@
-name: Node.js CI
-# on 表示触发actions的条件
+name: vue
+
 on:
-  push: 
-    branches: [ main ]  #main分支在push的时候会触发
+  push:
+    branches: [ "master" ]
   pull_request:
-    branches: [ main ] #main分支在PR的时候会触发
+    branches: [ "master" ]
 
 jobs:
-  build:
-
-    runs-on: ubuntu-latest #nodejs执行的操作系统
-
-    strategy:
-      matrix:
-        node-version: [16.14] #选择你需要的nodejs版本
-
+  Deploy:
+    runs-on: ubuntu-latest
+    
     steps:
-    - uses: actions/checkout@v2 
-    - name: 使用 Node.js ${{ matrix.node-version }}开始搞事情
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm install
-    - run: npm run build
-    - name: 自动同步文件夹到我的服务器
-      uses: wangyucode/sftp-upload-action@v1.1
-      with:
-        host: ${{ secrets.SERVER_IP }}  #你的nginx服务器公网ip
-        port: ${{ secrets.SERVER_PORT }} #你的nginx服务器ssh端口
-        username: ${{ secrets.USERNAME }} #你的nginx服务器用户名
-        password: ${{ secrets.PASSWORD }} #你的nginx服务器密码
-        localDir: "/data/blog-x/salt_space/" #你vue项目build好的文件的路径,每次服务器上会自动删除对应的文件夹后重新覆盖
-        remoteDir: ${{ secrets.SERVER_DESTINATION }} #你要把你build好的文件夹放到nginx服务器上的什么位置
+      - name: Deploy in CVM
+        env:
+            PRIVATE_KEY: ${{ secrets.CVM_SSH_KEY  }}
+            HOSTNAME : ${{ secrets.CVM_IP  }}
+            USER_NAME : ${{ secrets.CVM_USER  }}
+            PASS_WORD : ${{ secrets.CVM_PASSWORD }}
+            
+        run: |
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+          cd /data/blog-x/salt_space;
+          git pull;
+          '
