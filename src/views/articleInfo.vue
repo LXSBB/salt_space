@@ -50,7 +50,7 @@
           </div>
         </div>
         <!--    文章锚点    -->
-        <div class="navWrap">
+        <div class="navWrap" v-if="showNav">
           <div
               class="navWrapListItem"
               v-for="anchor in titles"
@@ -126,11 +126,13 @@ const watchScroll = (e: any) => {
 /*
 * 渲染右侧导航
 * */
+let showNav = ref(true)
 const renderNav = () => {
   //获取md中所有标题
   const anchors = preview.value.$el.querySelectorAll('h1,h2,h3,h4,h5,h6');
   //去除空值
   titles.value = Array.from(anchors).filter((title: any) => !!title.innerText.trim());
+  if (titles.value.length === 0) showNav.value = false
   //第一个锚点距离视口高度
   let firstTagScrollTop = Math.floor(titles.value[0]?.getBoundingClientRect()?.top) || 0
   if (!titles.value.length) {
@@ -175,6 +177,7 @@ onUnmounted(() => {
 @import "src/style/universal";
 .articleInfoContainer{
   width: 100%;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   background-color: var(--background-home);
@@ -244,8 +247,9 @@ onUnmounted(() => {
     .infoArea{
       display: inline-block;
       width: 820px;
-      min-height: 100vh;
+      height: auto;
       border-radius: 5px;
+      background-color: var(--background);
       .vMdWrap{
         border-radius: 5px;
         overflow: hidden;

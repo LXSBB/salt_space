@@ -10,7 +10,7 @@ import {homeStore} from "@/store/home_store";
 
 export default defineComponent({
   props:{
-    prop:Objectvite build
+    prop:Object
   },
   setup(props,{emit}) {
     let {prop}: any = toRefs(props)

@@ -1,6 +1,6 @@
 <template>
   <div class="homeContainer">
-      <div class="articleNavWrap home_card_left" v-show="!hiddenLabel">
+      <div class="articleNavWrap home_card_left" v-if="showLabel">
         <div :class="{'articleTitleWrap': true, 'articleTitleWrapDark':themeComputed === 'dark'}">
           <div class="articleTitleNav">
             <svg-icon name="new" color="#eeac07"></svg-icon>
@@ -36,7 +36,7 @@
       </div>
     </div>
     <!-- 右侧分类   -->
-      <div class="labelNavWrap" v-if="!hiddenLabel">
+      <div class="labelNavWrap" v-if="showLabel">
         <div
             class="labelClassifyWrap"
             :style="labelClassifyStyle"
@@ -73,6 +73,7 @@ import WorkentryCard from "@/components/homeComponent/workentryCard.vue";
 import { HomeService } from '@/api/homeService';
 import { Search } from '@element-plus/icons-vue'
 import { useUserStore } from "@/store/user_store";
+import {createDeflateRaw} from "zlib";
 
 const userStore = useUserStore()
 const useHomeStore:any = homeStore()
@@ -137,8 +138,8 @@ function labelClassifySlider() {
 //开屏显示骨架屏
 let showSkeleton = ref(false)
 
-//隐藏边栏
-let hiddenLabel = ref(true)
+//显示边栏
+let showLabel = ref(false)
 
 //显示无数据提示
 let noData = ref(false)
@@ -151,7 +152,6 @@ async function getArticleList () {
     })
     showSkeleton.value = false
     if (data) {
-      hiddenLabel.value = false
       articlesList.value = articlesList.value.concat(data.data.Articles)
       if (articlesList.value.length === 0) {
         noData.value = true
@@ -203,26 +203,28 @@ async function scrollGetList() {
 }
 
 //窗口变化
-function homeResize() {
-  if (window.innerWidth < 1200) {
-    hiddenLabel.value = true
-  } else if (window.innerWidth >= 1200 && categoriesList.value.length > 0) {
-    hiddenLabel.value = false
+async function homeResize() {
+  showLabel.value = window.innerWidth >= 1200
+  if (showLabel.value && categoriesList.value.length === 0) {
+   await getLabelList()
   }
-  if (!hiddenLabel.value) labelClassifySlider()
+  //更新滑块大小
+  if (showLabel.value) labelClassifySlider()
 }
 
 onMounted(async () => {
   window.addEventListener('scroll', scrollGetList)
   window.addEventListener('resize', homeResize)
   showSkeleton.value = true
-  await getLabelList()
+  showLabel.value = window.innerWidth >= 1200
+  if (window.innerWidth >= 1200) {
+    await getLabelList()
+  }
   await getArticleList()
-  if (!hiddenLabel.value) labelClassifySlider()
+  if (showLabel.value) labelClassifySlider()
 })
 
 onUnmounted(() => {
-  homeResize()
   window.removeEventListener('scroll', scrollGetList)
   window.removeEventListener('resize', homeResize)
 })
