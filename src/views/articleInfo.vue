@@ -2,7 +2,7 @@
   <div class="articleInfoContainer">
     <div class="articleContent">
       <!--    左侧按钮    -->
-      <div class="optionsArea">
+      <div class="optionsArea" v-if="showBar">
         <div class="leftBarBut likesBut">
           <svg-icon name="good_info"></svg-icon>
         </div>
@@ -15,10 +15,19 @@
       </div>
       <!--    文章内容    -->
       <div class="infoArea">
-        <div class="vMdWrap">
-          <v-md-preview ref="preview" :text="text"></v-md-preview>
+        <div class="infoArea_content">
+          <div class="infoArea_title_wrap">
+            <h1>{{articleInfo.title}}</h1>
+            <div class="infoArea_title_content">
+              <span class="infoArea_title_time">{{articleInfo.createTime}}</span>
+            </div>
+            <img class="infoArea_title_img" src="/src/assets/image/mountains.jpg" alt="">
+          </div>
+          <div class="vMdWrap">
+            <v-md-preview ref="preview" :text="text"></v-md-preview>
+          </div>
         </div>
-<!--        <article-comment></article-comment>-->
+        <article-comment></article-comment>
       </div>
       <!--    右侧内容    -->
       <div class="funArea">
@@ -155,21 +164,31 @@ const renderNav = () => {
 /*
 * 获取文章
 * */
+const articleInfo = ref({})
 async function getArticle() {
   const id = + (route.query.articleId as string)
   let data: any = await ArticleInfoService.articlePreview({articleId: id})
   if (data.code === 0) {
+    articleInfo.value = data.data
     text.value = data.data.content
   }
 }
 
+let showBar = ref(false)
+function resize() {
+  showBar.value = window.innerWidth > 1200
+}
+
 onMounted(async () => {
+  window.addEventListener('scroll', watchScroll)
+  window.addEventListener('resize', resize)
   await getArticle()
+  showBar.value = window.innerWidth > 1200
   renderNav()
-  addEventListener('scroll', watchScroll)
 })
 onUnmounted(() => {
-  removeEventListener('scroll', watchScroll)
+  window.removeEventListener('scroll', watchScroll)
+  window.removeEventListener('resize', resize)
 })
 </script>
 
@@ -186,6 +205,7 @@ onUnmounted(() => {
   padding-right: 40px;
   .articleContent{
     width: 1140px;
+    height: auto;
     display: flex;
     position: relative;
     justify-content: space-between;
@@ -245,11 +265,32 @@ onUnmounted(() => {
       }
     }
     .infoArea{
-      display: inline-block;
       width: 820px;
-      height: auto;
+      height: fit-content;
       border-radius: 5px;
-      background-color: var(--background);
+      .infoArea_content{
+        height: fit-content;
+        border-radius: 5px;
+        background-color: var(--background);
+        .infoArea_title_wrap{
+          padding: 45px 45px 0 45px;
+          h1{
+            font-size: 40px;
+            color: var(--font-color);
+          }
+          .infoArea_title_content{
+            display: flex;
+            .infoArea_title_time{
+              color: var(--font-color-1);
+            }
+          }
+          .infoArea_title_img{
+            width: 100%;
+            margin-top: 10px;
+          }
+        }
+      }
+
       .vMdWrap{
         border-radius: 5px;
         overflow: hidden;

@@ -65,7 +65,7 @@
 </template>
 
 <script lang="ts" setup>
-import {computed, nextTick, onMounted, onUnmounted, reactive, ref} from 'vue';
+import {computed, nextTick, onActivated, onDeactivated, onMounted, onUnmounted, reactive, ref} from 'vue';
 import {homeStore} from "@/store/home_store";
 import bus from 'vue3-eventbus'
 import TagCanvas from "@/components/homeComponent/tagCanvas.vue";
@@ -96,7 +96,7 @@ let searchVal:any = ref('')
 let tagIndex = ref(0)
 
 //切换分类
-function changeLabelClassify(e: any) {
+async function changeLabelClassify(e: any) {
   const tag = e.target.getAttribute('labelTag')
   if (!tag) return
   if (tag === '综合') {
@@ -110,6 +110,7 @@ function changeLabelClassify(e: any) {
   }
   //调整滑块位置
   labelClassifySlider()
+  await getArticleList(tag === '综合' ? '' : tag)
 }
 
 
@@ -144,11 +145,12 @@ let showLabel = ref(false)
 //显示无数据提示
 let noData = ref(false)
 //获取文章列表
-async function getArticleList () {
+async function getArticleList (tag:string = '') {
   try {
     const data: any = await HomeService.getArticleList({
       pageNum: pageNum.value,
-      pageSize: 12
+      pageSize: 12,
+      searchTitle: tag
     })
     showSkeleton.value = false
     if (data) {
@@ -229,6 +231,12 @@ onUnmounted(() => {
   window.removeEventListener('resize', homeResize)
 })
 
+onActivated(() => {
+  console.log('==========>active')
+})
+onDeactivated(() => {
+  console.log('==========>deactive')
+})
 </script>
 
 <style scoped lang="scss">

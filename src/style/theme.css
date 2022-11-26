@@ -7,9 +7,13 @@
     --Skeleton-1: #303030;
     --Skeleton-2: #424243;
     --font-color: rgba(255,255,255,0.6);;
+    --font-color-1: #8a919f;
     --font-color-bold: rgba(255,255,255,0.87);
     --theme-color: #0b73f3;
-    --theme-color-1: rgba(11, 115, 243, 0.59);
+    --theme-color-1: rgba(11, 115, 243, 0.4);
+    --theme-color-2: rgb(42, 114, 204);
+    --theme-color-4: rgb(29, 53, 82);
+    --theme-color-3: #5ebedb;
     --login-but: #63b956;
     --background-home: #1a1a1a;
     --switch-background : #0d1823;
@@ -27,11 +31,13 @@
     --Skeleton-1: #f0f2f5;
     --Skeleton-2: #e6e8eb;
     --font-color: #515767;
+    --font-color-1: #8a919f;
     --font-color-bold: black;
     --login-but: #63b956;
     --theme-color: #0b73f3;
     --theme-color-1: rgba(11, 115, 243, 0.4);
     --theme-color-2: rgb(42, 114, 204);
+    --theme-color-4: rgb(29, 53, 82);
     --theme-color-3: #5ebedb;
     --switch-background: #eeac07;
     --switch-but-background: #fff;

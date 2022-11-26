@@ -10,17 +10,20 @@ const routes = [
     {
         path: '/',
         name: 'home',
-        component: Home
+        component: Home,
+        meta: {
+            keepAlive: true,
+        }
     },
     {
         path: '/personalCenter',
         name: 'personalCenter',
-        component: PersonalCenter
+        component: PersonalCenter,
     },
     {
         path: '/info',
         name: 'articleInfo',
-        component: articleInfo
+        component: articleInfo,
     },
     {
         path: '/createCenter',

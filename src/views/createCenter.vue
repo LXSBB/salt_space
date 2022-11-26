@@ -1,43 +1,51 @@
 <template>
-  <div class="create">
-    <div class="create_menu">
-      <el-menu
-          :default-openeds="['1']"
-          class="el-menu-vertical-demo"
-          :collapse="false"
-          @upload-image="handleUploadImage"
-          @open="handleOpen"
-          @close="handleClose"
-      >
-        <el-sub-menu index="1">
-          <template #title>
-            <el-icon><document /></el-icon>
-            <span>草稿箱</span>
-          </template>
-          <el-menu-item index="1-1">item one</el-menu-item>
-          <el-menu-item index="1-2">item one</el-menu-item>
-          <el-menu-item index="1-3">item one</el-menu-item>
-        </el-sub-menu>
-        <el-sub-menu index="2">
-          <template #title>
-            <el-icon><document /></el-icon>
-            <span>已发布文章</span>
-          </template>
-          <el-menu-item index="2-1">item one</el-menu-item>
-          <el-menu-item index="2-2">item one</el-menu-item>
-          <el-menu-item index="2-3">item one</el-menu-item>
-        </el-sub-menu>
-      </el-menu>
-      <div class="create_menu_buttonWrap">
-        <button class="create_menu_button create floatButton">
-          <span>创建草稿</span>
-        </button>
-        <div class="create_menu_button back floatButton" @click="routerPush('/')">
-          <span>回到主页</span>
+  <div class="create" ref="create">
+    <div class="create_menu" ref="createMenu">
+      <div class="create_menu_content">
+        <el-menu
+            :default-openeds="['1']"
+            class="el-menu-vertical-demo"
+            :collapse="false"
+            @upload-image="handleUploadImage"
+            @open="handleOpen"
+            @close="handleClose"
+        >
+          <el-sub-menu index="1">
+            <template #title>
+              <el-icon><document /></el-icon>
+              <span>草稿箱</span>
+            </template>
+            <el-menu-item index="1-1">item one</el-menu-item>
+            <el-menu-item index="1-2">item one</el-menu-item>
+            <el-menu-item index="1-3">item one</el-menu-item>
+          </el-sub-menu>
+          <el-sub-menu index="2">
+            <template #title>
+              <el-icon><document /></el-icon>
+              <span>已发布文章</span>
+            </template>
+            <el-menu-item index="2-1">item one</el-menu-item>
+            <el-menu-item index="2-2">item one</el-menu-item>
+            <el-menu-item index="2-3">item one</el-menu-item>
+          </el-sub-menu>
+        </el-menu>
+        <div class="create_menu_buttonWrap">
+          <button class="create_menu_button create floatButton">
+            <span>创建草稿</span>
+          </button>
+          <div class="create_menu_button back floatButton" @click="routerPush('/')">
+            <span>回到主页</span>
+          </div>
         </div>
       </div>
+      <div class="mdMark" v-if="showMark"/>
+      <div class="moveLine"
+           ref="moveLine"
+           @mousedown="moveLineDown"
+      />
     </div>
     <div class="create_md">
+      <div class="mdMark" v-if="showMark"/>
       <div class="create_md_nav">
         <input
             class="create_md_nav_input"
@@ -72,10 +80,10 @@
           <div :class="{'releaseDialog_tagBut': true,
           'releaseDialog_tagBut_active': item.value === targetTag}"
                v-for="item in tagList"
-               :key="item.value"
+               :key="item.label"
                @click="clickTag(item.value)"
           >
-            <span>{{item.value}}</span>
+            <span>{{item.label}}</span>
           </div>
         </div>
       </div>
@@ -146,7 +154,7 @@
 </template>
 
 <script lang="ts" setup>
-import {nextTick, onMounted, ref} from 'vue'
+import {nextTick, onActivated, onDeactivated, onMounted, ref} from 'vue'
 import {
   Document,
   Delete
@@ -159,6 +167,7 @@ import {CreateService} from "@/api/createService";
 import {ElNotification} from "element-plus/es";
 import ProgressBar from "@/tool/canvas/progressBar";
 import {homeStore} from "@/store/home_store";
+import {HomeService} from "@/api/homeService";
 
 const route: any = useRoute()
 const router = useRouter()
@@ -194,13 +203,12 @@ let releaseDialogVisible = ref(false)
 
 //打开发布文章弹出窗
 function openReleaseDialog() {
-  targetTag.value = 0
   preImg.value = ''
   releaseDialogVisible.value = true
 }
 
 //当前发布文章的标签
-let targetTag = ref(0)
+let targetTag = ref(-1)
 
 //选择文章分类
 function clickTag(index: number) {
@@ -246,7 +254,11 @@ async function releaseArticle() {
   let params = {
     title: targetName.value,
     content: text.value,
+    summary: targetSummary.value,
+    cover_img: preImg.value,
+    cate: targetTag.value
   }
+  console.log(params)
   const data: any = await CreateService.createArticle(params)
   if (data.code === 0) {
     ElNotification({
@@ -256,19 +268,64 @@ async function releaseArticle() {
       type: 'warning',
     })
     releaseDialogVisible.value = false
+  } else {
+    ElNotification({
+      offset: 70,
+      title: 'Warning',
+      message: '发布失败',
+      type: 'warning',
+    })
   }
 }
 
 let editorHeight = ref('')
 
-onMounted(() => {
-tagList.value = useHomeStore.labelList.map(_ => {
+const createMenu = ref('')
+const create: any = ref('')
+const moveLine: any = ref('')
+
+/*
+* 拖拽边线调整菜单宽度
+* */
+let showMark = ref(false)
+let isLineDown = false
+function moveLineDown(e: any) {
+  e.preventDefault()
+  isLineDown = true
+  showMark.value = true
+  moveLine.value.style.backgroundColor = '#6e8adc'
+  window.addEventListener('mouseup', moveLineUp)
+  window.addEventListener('mousemove', moveLineMove)
+}
+function moveLineMove(e: any) {
+  create.value.style.cursor= "ew-resize";
+  if (e.clientX > 200 && e.clientX <= 600) {
+    (createMenu.value as any).style.width = e.clientX + 'px'
+  }
+}
+function moveLineUp() {
+  isLineDown = false;
+  create.value.style.cursor= "default";
+  showMark.value = false
+  moveLine.value.style.backgroundColor = 'rgb(29, 39, 82)'
+  window.removeEventListener('mouseup', moveLineUp)
+  window.removeEventListener('mousemove', moveLineMove)
+}
+
+
+onMounted(async () => {
+  if (useHomeStore.labelList.length === 0) {
+    const {data}: any = await HomeService.getLabelList()
+    useHomeStore.labelList = data.categories
+    console.log(data.categories)
+  }
+  tagList.value = useHomeStore.labelList.map(_ => {
     return {
-      value: _.name,
+      value: _.id,
       label: _.name
     }
   })
-  nextTick(() => {
+  await nextTick(() => {
     editorHeight.value = `${window.innerHeight - 50}px`
   })
 })
@@ -284,8 +341,13 @@ tagList.value = useHomeStore.labelList.map(_ => {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    position: relative;
+    .create_menu_content{
+      width: 100%;
+      height: 100%;
+    }
     .create_menu_buttonWrap{
-      opacity: .8;
+      opacity: 1;
       height: 20%;
       width: 100%;
       display: flex;
@@ -293,7 +355,20 @@ tagList.value = useHomeStore.labelList.map(_ => {
       align-items: center;
       justify-content: flex-end;
       //border-right: 1px solid var(--background);
-      background-color: var(--theme-color-2);
+      background-color: rgb(29, 53, 82);
+    }
+    .moveLine{
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 4px;
+      height: 100%;
+      background-color: rgb(29, 39, 82);
+      cursor: ew-resize;
+      transition: all .3s;
+      &:hover{
+        background-color: #6e8adc;
+      }
     }
   }
   .create_md{
@@ -301,11 +376,12 @@ tagList.value = useHomeStore.labelList.map(_ => {
     display: flex;
     flex-direction: column;
     flex: 1;
+    position: relative;
     .create_md_nav{
-      opacity: .8;
+      opacity: 1;
       width: 100%;
       height: 50px;
-      background-color: var(--theme-color-2);
+      background-color: var(--theme-color-4);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -334,6 +410,7 @@ tagList.value = useHomeStore.labelList.map(_ => {
     color: white;
     margin-bottom: 20px;
     cursor: pointer;
+    user-select: none;
   }
   .create{
     background-color: #6666ff;
@@ -349,18 +426,18 @@ tagList.value = useHomeStore.labelList.map(_ => {
     background-color: #ff9966;
   }
   .el-menu{
-    opacity: .8;
+    opacity: 1;
     height: 80%;
-    background-color: var(--theme-color-2);
+    background-color: var(--theme-color-4);
     border: none;
     padding-top: 30px;
     .el-sub-menu{
       color: #fff;
-      background-color: var(--theme-color-2);
+      background-color: var(--theme-color-4);
     }
     .el-menu-item{
       color: #fff;
-      background-color: var(--theme-color-2);
+      background-color: var(--theme-color-4);
       &:hover{
         background-color: var(--theme-color-1);
         color: var(--theme-color);
@@ -396,7 +473,7 @@ tagList.value = useHomeStore.labelList.map(_ => {
   vertical-align: middle;
   -webkit-appearance: none;
   background-color: rgba(11, 115, 243, 0.4);
-  border:1px solid #0b73f3;
+  //border:1px solid #0b73f3;
   padding: 8px 15px;
   font-size: 14px;
   border-radius: 5px;
@@ -405,13 +482,20 @@ tagList.value = useHomeStore.labelList.map(_ => {
     filter: grayscale(50%)
   }
 }
+.mdMark{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 99;
+}
 </style>
 
 <style lang="scss">
 @import "src/style/universal";
 .el-menu-vertical-demo:not(.el-menu--collapse) {
-  width: 200px;
+  width: 100%;
   min-height: 400px;
+  user-select: none;
 }
 .release_dialog{
   .el-dialog__body{
