@@ -5,6 +5,6 @@ export class ArticleInfoService{
     * 获取文章详情
     * */
     static async articlePreview(params: object) {
-        return request('/article/preview', params, 'get')
+        return request('/article/details', params, 'get')
     }
 }

@@ -1,7 +1,7 @@
 <template>
   <div class="bannerItemContainer">
     <div class="console-container">
-      <span id="bannerItem1Text">111</span>
+      <span id="bannerItem1Text"></span>
       <div class="console-underscore" id="console"></div>
     </div>
   </div>
@@ -49,7 +49,7 @@ export default defineComponent({
           target.innerHTML = words[0].substring(0, letterCount)
           letterCount += x;
         }
-      }, 120)
+      }, 400)
       //光标闪动
       window.setInterval(function() {
         if (visible) {
@@ -59,10 +59,10 @@ export default defineComponent({
           con.className = 'console-underscore'
           visible = true;
         }
-      }, 400)
+      }, 500)
     }
     onMounted(() => {
-      consoleText(['welcome to', 'salt-space'], 'bannerItem1Text',['tomato','lightblue']);
+      consoleText(['创作中心'], 'bannerItem1Text',['#fff']);
     })
     return {}
   }
@@ -73,23 +73,23 @@ export default defineComponent({
 .bannerItemContainer{
   height: 100%;
   width: 100%;
-  background-color: #111;
   display: flex;
   justify-content: center;
   align-items: center;
   .console-container{
-    height: 100px;
-    min-width: 30px;
-    font-size: 70px;
+    height: 20px;
+    min-width: 0px;
+    font-size: 14px;
     text-align: center;
     display: flex;
     position: relative;
     #bannerItem1Text{
-      margin-right: 40px;
+      white-space: nowrap;
+      margin-right:5px;
     }
     .console-underscore{
-      width: 30px;
-      height: 6px;
+      width: 5px;
+      height: 2px;
       background-color: white;
       position: absolute;
       bottom: 0;

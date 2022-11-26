@@ -30,40 +30,40 @@
   }
 }
 
-.el-button{
-  &:active{
-    border-color: $card-background-hover;
-    color: $card-background-hover_b;
-    background-color: $card-background-color;
-  }
-  &:focus{
-    border-color: $card-background-hover;
-    color: $card-background-hover_b;
-    background-color: $card-background-color;
-  }
-  &:hover{
-    border-color: $card-background-hover;
-    color: $card-background-hover_b;
-    background-color: $card-background-color;
-  }
-}
+//.el-button{
+//  &:active{
+//    border-color: $card-background-hover;
+//    color: $card-background-hover_b;
+//    background-color: $card-background-color;
+//  }
+//  &:focus{
+//    border-color: $card-background-hover;
+//    color: $card-background-hover_b;
+//    background-color: $card-background-color;
+//  }
+//  &:hover{
+//    border-color: $card-background-hover;
+//    color: $card-background-hover_b;
+//    background-color: $card-background-color;
+//  }
+//}
 
 .el-button--primary{
-  background-color: $card-background-hover;
-  border-color:$card-background-hover;
-  &:active{
-    border-color: $card-background-hover_b;
-    background-color: $card-background-hover_b;
-    color: #ffffff;
-  }
-  &:focus{
-    border-color: $card-background-hover_b;
-    background-color: $card-background-hover_b;
-    color: #ffffff;
-  }
-  &:hover{
-    border-color: $card-background-hover;
-    background-color: $card-background-hover_b;
-    color: #ffffff;
-  }
+  //background-color: var(--theme-color);
+  //border-color:var(--theme-color);
+  ////&:active{
+  ////  border-color: var(--theme-color-1);
+  ////  background-color: var(--theme-color-1);
+  ////  color: #ffffff;
+  ////}
+  ////&:focus{
+  ////  border-color: var(--theme-color-1);
+  ////  background-color: var(--theme-color-1);
+  ////  color: #ffffff;
+  ////}
+  ////&:hover{
+  ////  border-color: var(--theme-color-1);
+  ////  background-color: var(--theme-color-1);
+  ////  color: #ffffff;
+  ////}
 }

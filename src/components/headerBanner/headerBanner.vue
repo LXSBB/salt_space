@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import {defineComponent} from 'vue';
-import BannerItem1 from "./bannerItem1.vue";
+import BannerItem1 from "../nav/typing.vue";
 
 export default defineComponent({
   components: {BannerItem1},

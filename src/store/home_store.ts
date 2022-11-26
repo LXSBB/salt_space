@@ -3,7 +3,8 @@ import Type from '../types/types'
 export const homeStore = defineStore('home', {
     state: () => ({
         nowTopic:1,
-        theme: 'light'
+        theme: 'light',
+        labelList: [], //首页标签
     }),
     getters: {
         // countPow2(state) {

@@ -12,7 +12,7 @@
       <div class="g-progress"></div>
     </div>
     <div class="el-upload__text" v-else>
-      将图片拖拽此处 或<em style="color: #a87ef1"> 点击</em>
+      将图片拖拽此处 或<em style="color: #0b73f3"> 点击</em>
     </div>
   </div>
 </template>
@@ -105,6 +105,7 @@ $progressWidth: var(--w, 0%);
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  transition: all .3s;
   .loading_wrap{
     position: relative;
     height: 70px;
@@ -135,7 +136,7 @@ $progressWidth: var(--w, 0%);
   }
 
   &:hover{
-    border-color: $card-background-color-b;
+    border-color: var(--theme-color-3);
   }
 }
 </style>

@@ -147,7 +147,7 @@ async function getArticleList () {
   try {
     const data: any = await HomeService.getArticleList({
       pageNum: pageNum.value,
-      pageSize: 8
+      pageSize: 12
     })
     showSkeleton.value = false
     if (data) {
@@ -173,6 +173,7 @@ async function getLabelList() {
     const {data}: any = await HomeService.getLabelList()
     if (data) {
       categoriesList.value = data.categories
+      useHomeStore.labelList = data.categories
     }
   } catch (e) {
     errShow()
@@ -221,6 +222,7 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
+  homeResize()
   window.removeEventListener('scroll', scrollGetList)
   window.removeEventListener('resize', homeResize)
 })
@@ -231,7 +233,7 @@ onUnmounted(() => {
 @import "src/style/universal";
 .homeContainer{
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   background-color: var(--background-home);
@@ -402,7 +404,7 @@ onUnmounted(() => {
       }
     }
     .labelClassifyWrap::after{
-      transition: all .5s;
+      transition: all .3s;
       content: "";
       border-radius: 12px;
       position: absolute;

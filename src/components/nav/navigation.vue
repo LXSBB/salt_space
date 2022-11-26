@@ -11,19 +11,11 @@
         <div class="hoverBox _center"></div>
         <div :class="{'hoverBox':true}"></div>
       </div>
-<!--      <el-switch-->
-<!--          v-model="themeVal"-->
-<!--          class="ml-2"-->
-<!--          inline-prompt-->
-<!--          active-icon="Moon"-->
-<!--          inactive-icon="Sunny"-->
-<!--          @change="themeChange"-->
-<!--      />-->
       <theme-switch></theme-switch>
       <el-input v-model="searchVal" placeholder="Please input" />
       <!--   创作中心   -->
       <div class="createCenterBut" @click="routerPush('/createCenter')" >
-        <span>创作中心</span>
+        <typing></typing>
       </div>
     </div>
     <div class="nav_right_bar">
@@ -48,9 +40,10 @@ import {homeStore} from "@/store/home_store";
 import UserCard from "@/components/globals/userCard.vue";
 import { Moon, Sunny } from '@element-plus/icons-vue'
 import ThemeSwitch from "@/components/nav/themeSwitch.vue";
+import Typing from "@/components/nav/typing.vue";
 
 export default defineComponent({
-  components: {ThemeSwitch, UserCard, LogInBox},
+  components: {Typing, ThemeSwitch, UserCard, LogInBox},
   setup() {
     const route: any = useRoute()
     const router = useRouter()
@@ -205,7 +198,7 @@ export default defineComponent({
   }
 }
 .createCenterBut{
-  //width: 140px;
+  width: 160px;
   font-size: 14px;
   color: #fff;
   padding: 7px 12px;

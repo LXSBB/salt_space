@@ -2,7 +2,7 @@
   <div class="create">
     <div class="create_menu">
       <el-menu
-          :default-openeds="['1','1-2']"
+          :default-openeds="['1']"
           class="el-menu-vertical-demo"
           :collapse="false"
           @upload-image="handleUploadImage"
@@ -12,20 +12,20 @@
         <el-sub-menu index="1">
           <template #title>
             <el-icon><document /></el-icon>
-            <span>我的文章</span>
+            <span>草稿箱</span>
           </template>
-          <el-sub-menu index="1-1">
-            <template #title>已发布文章</template>
-            <el-menu-item index="1-1-1">item one</el-menu-item>
-            <el-menu-item index="1-1-2">item one</el-menu-item>
-            <el-menu-item index="1-1-3">item one</el-menu-item>
-          </el-sub-menu>
-          <el-sub-menu index="1-2">
-            <template #title>草稿箱</template>
-            <el-menu-item index="1-2-1">item one</el-menu-item>
-            <el-menu-item index="1-2-2">item one</el-menu-item>
-            <el-menu-item index="1-2-3">item one</el-menu-item>
-          </el-sub-menu>
+          <el-menu-item index="1-1">item one</el-menu-item>
+          <el-menu-item index="1-2">item one</el-menu-item>
+          <el-menu-item index="1-3">item one</el-menu-item>
+        </el-sub-menu>
+        <el-sub-menu index="2">
+          <template #title>
+            <el-icon><document /></el-icon>
+            <span>已发布文章</span>
+          </template>
+          <el-menu-item index="2-1">item one</el-menu-item>
+          <el-menu-item index="2-2">item one</el-menu-item>
+          <el-menu-item index="2-3">item one</el-menu-item>
         </el-sub-menu>
       </el-menu>
       <div class="create_menu_buttonWrap">
@@ -70,12 +70,12 @@
         <span class="releaseDialog_item_title">分类:</span>
         <div class="releaseDialog_item_content">
           <div :class="{'releaseDialog_tagBut': true,
-          'releaseDialog_tagBut_active': item.index === targetTag}"
+          'releaseDialog_tagBut_active': item.value === targetTag}"
                v-for="item in tagList"
-               :key="item.index"
-               @click="clickTag(item.index)"
+               :key="item.value"
+               @click="clickTag(item.value)"
           >
-            <span>{{item.btuName}}</span>
+            <span>{{item.value}}</span>
           </div>
         </div>
       </div>
@@ -107,7 +107,7 @@
                      multiple
                      class="inputCollection"
                      style="width: 300px"
-                     placeholder="最多收录至三个合集"
+                     placeholder="只能收录至一个合集"
           >
             <el-option
                 v-for="item in collection"
@@ -133,11 +133,12 @@
       <template #footer>
       <span class="dialog-footer">
         <el-button @click="releaseDialogVisible = false">取消</el-button>
-        <el-button type="primary"
-                   @click="releaseArticle"
+        <button
+            class="submitButton"
+            @click="releaseArticle"
         >
           确认并发布
-        </el-button>
+        </button>
       </span>
       </template>
     </el-dialog>
@@ -157,39 +158,16 @@ import UploadFile from "@/components/createCenterComp/uploadFile.vue";
 import {CreateService} from "@/api/createService";
 import {ElNotification} from "element-plus/es";
 import ProgressBar from "@/tool/canvas/progressBar";
+import {homeStore} from "@/store/home_store";
 
 const route: any = useRoute()
 const router = useRouter()
 const isCollapse = ref(true)
 //md内容
 const text = ref('')
+const useHomeStore:any = homeStore()
 
-let tagList = [
-  {
-    index:1,
-    btuName:'前端'
-  },
-  {
-    index:2,
-    btuName:'后端'
-  },
-  {
-    index:3,
-    btuName:'测试'
-  },
-  {
-    index:4,
-    btuName:'AI'
-  },
-  {
-    index:5,
-    btuName:'阅读'
-  },
-  {
-    index:6,
-    btuName:'生活'
-  },
-]
+let tagList: any = ref([])
 //当前文章的标题
 let targetName = ref('')
 const handleOpen = (key: string, keyPath: string[]) => {
@@ -270,7 +248,7 @@ async function releaseArticle() {
     content: text.value,
   }
   const data: any = await CreateService.createArticle(params)
-  if (data.code === 1) {
+  if (data.code === 0) {
     ElNotification({
       offset: 70,
       title: 'Warning',
@@ -284,7 +262,12 @@ async function releaseArticle() {
 let editorHeight = ref('')
 
 onMounted(() => {
-  console.log(  window.innerHeight)
+tagList.value = useHomeStore.labelList.map(_ => {
+    return {
+      value: _.name,
+      label: _.name
+    }
+  })
   nextTick(() => {
     editorHeight.value = `${window.innerHeight - 50}px`
   })
@@ -302,6 +285,7 @@ onMounted(() => {
     flex-direction: column;
     overflow: hidden;
     .create_menu_buttonWrap{
+      opacity: .8;
       height: 20%;
       width: 100%;
       display: flex;
@@ -318,6 +302,7 @@ onMounted(() => {
     flex-direction: column;
     flex: 1;
     .create_md_nav{
+      opacity: .8;
       width: 100%;
       height: 50px;
       background-color: var(--theme-color-2);
@@ -364,9 +349,11 @@ onMounted(() => {
     background-color: #ff9966;
   }
   .el-menu{
+    opacity: .8;
     height: 80%;
     background-color: var(--theme-color-2);
     border: none;
+    padding-top: 30px;
     .el-sub-menu{
       color: #fff;
       background-color: var(--theme-color-2);
@@ -388,6 +375,34 @@ onMounted(() => {
     &:hover{
       background-color: transparent;
     }
+  }
+}
+.submitButton{
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  line-height: 1;
+  height: 38px;
+  white-space: nowrap;
+  cursor: pointer;
+  color: #0b73f3;
+  text-align: center;
+  box-sizing: border-box;
+  outline: 0;
+  transition: .1s;
+  font-weight: normal;
+  -webkit-user-select: none;
+  user-select: none;
+  vertical-align: middle;
+  -webkit-appearance: none;
+  background-color: rgba(11, 115, 243, 0.4);
+  border:1px solid #0b73f3;
+  padding: 8px 15px;
+  font-size: 14px;
+  border-radius: 5px;
+  margin-left: 10px;
+  &:active{
+    filter: grayscale(50%)
   }
 }
 </style>
@@ -442,11 +457,10 @@ onMounted(() => {
           }
         }
         .releaseDialog_tagBut_active{
-          background-color: $card-background-color-b ;
-          color: $background-color;
+          background-color: var(--theme-color-1) ;
+          color: #fff;
           &:hover{
-            background-color: $card-background-color-b ;
-            color: $background-color;
+            background-color: var(--theme-color-1) ;
           }
         }
         .upload-release{

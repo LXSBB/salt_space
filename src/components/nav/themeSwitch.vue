@@ -1,6 +1,7 @@
 <template>
   <div class="daySwitchWrap">
     <div class="daySwitch" @click="themeChange">
+      <div class="darkTop"></div>
       <div class="star star1" v-if="themeComputed === 'dark'"></div>
       <div class="star star2" v-if="themeComputed === 'dark'"></div>
       <div class="star star3" v-if="themeComputed === 'dark'"></div>
@@ -81,6 +82,26 @@ function themeChange() {
       background: #5ebedb;
       animation: skyAnim 3s -.4s linear infinite;
     }
+    .darkTop{
+      position: absolute;
+      width: 70%;
+      height: 5px;
+      border-radius: 42% 38% 62% 49% / 45%;;
+      background: #5ebedb;
+      filter: blur(8px);;
+      top: 0;
+      right: 0;
+    }
+    .star{
+      background: #5ebedb;
+      width: 7px;
+      height: 7px;
+      border-radius: 7px;
+      position: absolute;
+      left: 50%;
+      top: 10%;
+      z-index: 4;
+    }
     .sunMoon{
       position: absolute;
       height: 20px;
@@ -137,15 +158,6 @@ function themeChange() {
         transform: scale(1);
       }
     }
-    .star{
-      background: #5ebedb;
-      width: 7px;
-      height: 7px;
-      border-radius: 7px;
-      position: absolute;
-      left: 50%;
-      top: 10%;
-    }
     .star1{
       transform: translate(10px,15px) scale(.3);
       animation: starAnim1 3s -2.4s linear infinite;
@@ -155,7 +167,7 @@ function themeChange() {
       animation: starAnim2 3s -1.1s linear infinite;
     }
     .star3{
-      transform: translate(35px,-12px) scale(.9);
+      transform: translate(20px,-12px) scale(.9);
       animation: starAnim3 3s -1.5s linear infinite;
     }
     .star4{
@@ -246,19 +258,19 @@ function themeChange() {
 }
 @keyframes starAnim3 {
   0% {
-    transform: translate(30px,30px) scale(.9);
+    transform: translate(20px,30px) scale(.9);
   }
   20% {
-    transform: translate(33px,17px) scale(.9);
+    transform: translate(23px,17px) scale(.9);
   }
   50% {
-    transform: translate(35px,0) scale(.9);
+    transform: translate(25px,0) scale(.7);
   }
   80% {
-    transform: translate(33px,-17px) scale(.9);
+    transform: translate(23px,-17px) scale(.7);
   }
   100% {
-    transform: translate(30px,-30px) scale(.9);
+    transform: translate(30px,-30px) scale(.5);
   }
 }
 @keyframes starAnim4 {
