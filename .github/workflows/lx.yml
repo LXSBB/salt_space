@@ -1,26 +1,39 @@
-name: vue
-
+name: Node.js CI
+# on 表示触发actions的条件
 on:
-  push:
-    branches: [ "master" ]
+  push: 
+    branches: [ main ]  #main分支在push的时候会触发
   pull_request:
-    branches: [ "master" ]
+    branches: [ main ] #main分支在PR的时候会触发
 
 jobs:
-  Deploy:
-    runs-on: ubuntu-latest
-    
+  build:
+
+    runs-on: ubuntu-latest #nodejs执行的操作系统
+
+    strategy:
+      matrix:
+        node-version: [16.14] #选择你需要的nodejs版本
+
     steps:
-      - name: Deploy in CVM
-        env:
+    - uses: actions/checkout@v2 
+    - name: 使用 Node.js ${{ matrix.node-version }}开始搞事情
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - run: npm install
+    - run: npm run build
+    - name: 自动同步文件夹到我的服务器
+      env:
             PRIVATE_KEY: ${{ secrets.CVM_SSH_KEY  }}
             HOSTNAME : ${{ secrets.CVM_IP  }}
             USER_NAME : ${{ secrets.CVM_USER  }}
             PASS_WORD : ${{ secrets.CVM_PASSWORD }}
             
-        run: |
+      run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
           cd /data/blog-x/salt_space;
-          git pull;
           '
+
