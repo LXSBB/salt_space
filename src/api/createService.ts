@@ -7,6 +7,7 @@ export class CreateService{
     static async upload(params: object, cb: Function) {
         return request('/upload', params, 'post', cb)
     }
+
     /*
     * 创建文章
     * */
